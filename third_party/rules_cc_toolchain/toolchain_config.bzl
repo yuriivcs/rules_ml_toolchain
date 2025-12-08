@@ -33,10 +33,11 @@ load(
     "env_entry",
     "env_set",
     "feature",
+    "flag_group",
+    "flag_set",
     "tool",
     "tool_path",
 )
-
 ALL_ACTIONS = [
     ACTION_NAMES.c_compile,
     ACTION_NAMES.cpp_compile,
@@ -58,6 +59,29 @@ ALL_ACTIONS = [
     ACTION_NAMES.cpp_link_static_library,
     ACTION_NAMES.clif_match,
 ]
+
+def asan_early_link_feature():
+    return feature(
+        name = "asan_early_link",
+        flag_sets = [
+            flag_set(
+                actions = [ACTION_NAMES.cpp_link_executable],
+                flag_groups = [
+                    # This flag_group runs before any standard library linking
+                    # group (like the one that processes libraries_to_link).
+                    flag_group(
+                        flags = ["-lasan"],
+                    ),
+                ],
+            ),
+        ],
+    )
+
+def toolchain_features():
+    # Return a list containing your custom feature
+    return [
+        asan_early_link_feature(),
+    ]
 
 def _label_to_tool_path_feature(tool_mapping = {}):
     """Creates a feature with an env variable pointing to the label.

@@ -20,6 +20,7 @@
 load("//third_party/rules_cc_toolchain:toolchain_config.bzl", "cc_toolchain_config")
 load("//third_party/rules_cc_toolchain/features:cc_toolchain_import.bzl", "cc_toolchain_import")
 load("//third_party/rules_cc_toolchain/features:features.bzl", "cc_toolchain_import_feature")
+load("//cc/features:features.bzl", "cc_toolchain_import_asan_feature")
 
 package(
     default_visibility = [
@@ -50,7 +51,7 @@ cc_toolchain_import(
         "@sysroot_linux_x86_64//:includes_system",
         "@sysroot_linux_x86_64//:syslibs",
         "@sysroot_linux_x86_64//:openmp",
-        "@llvm_linux_x86_64//:libclang_rt",
+        "@llvm_linux_x86_64//:libclang_rt", # TODO: Set only according to //common... flag
     ],
     visibility = ["//visibility:public"],
 )
@@ -61,6 +62,21 @@ cc_toolchain_import_feature(
     toolchain_import = ":imports",
 )
 
+cc_toolchain_import(
+    name = "asan",
+    deps = [
+        "@llvm_linux_x86_64//:libclang_rt",
+        "@llvm_linux_x86_64//:libclang_rt_asan",
+    ],
+)
+
+cc_toolchain_import_asan_feature(
+    name = "asan_feature",
+    enabled = True,
+    toolchain_import = "@sysroot_linux_x86_64//:syslibs",
+    asan_ignorelist = "@llvm_linux_x86_64//:asan_ignorelist",
+)
+
 # buildifier: leave-alone
 filegroup(
     name = "all",
@@ -69,6 +85,7 @@ filegroup(
         ":wrappers",
         ":startup_libs",
         "@llvm_linux_x86_64//:all",
+        "@llvm_linux_x86_64//:libclang_rt_asan",
     ],
 )
 
@@ -82,6 +99,7 @@ filegroup(
         "@llvm_linux_x86_64//:clang++",
         "@llvm_linux_x86_64//:distro_libs",
         "@llvm_linux_x86_64//:asan_ignorelist",
+        "@llvm_linux_x86_64//:libclang_rt_asan",
     ],
 )
 
@@ -94,6 +112,7 @@ filegroup(
         "@llvm_linux_x86_64//:ld",
         "@sysroot_linux_x86_64//:startup_libs",
         "@llvm_linux_x86_64//:distro_libs",
+        "@llvm_linux_x86_64//:libclang_rt_asan",
     ],
 )
 
@@ -135,7 +154,9 @@ cc_toolchain_config(
     compiler_features = [
         # Hermetic libraries feature required before import.
         "//third_party/rules_cc_toolchain/features:hermetic_libraries",
+        ":asan_feature",        # ASan should come first in initial library list
         ":imports_feature",
+        #"//cc/features:sanitizer",
 
         # Toolchain configuration
         "//third_party/rules_cc_toolchain/features:warnings",

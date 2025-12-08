@@ -107,6 +107,12 @@ alias(
     visibility = ["//visibility:public"],
 )
 
+alias(
+    name = "libclang_rt_asan",
+    actual = "@@%{llvm_repo_name}//:libclang_rt_asan",
+    visibility = ["//visibility:public"],
+)
+
 # Use when build CUDA by Clang (NVCC doesn't need it)
 alias(
     name = "cuda_wrappers_headers",
