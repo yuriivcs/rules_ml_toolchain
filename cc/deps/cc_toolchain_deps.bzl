@@ -73,14 +73,14 @@ def cc_toolchain_deps():
         )
 
     if "sysroot_linux_x86_64_glibc_2_31" not in native.existing_rules():
-        # C++20, manylinux_2_31, gcc-11
+        # C++20, manylinux_2_31, gcc-13
         mirrored_http_archive(
             name = "sysroot_linux_x86_64_glibc_2_31",
-            sha256 = "8ce91e1cbe288f8525075b656b4bbcc8c9997b118fbcef78e1f172930fc6a619",
-            mirrored_tar_sha256 = "4df1edd5223aabbdd1cce4c3f4706ccb62be26c3eba2d21a2f4b8605fad3b09c",
-            urls = tf_mirror_urls("https://storage.googleapis.com/ml-sysroot-testing/x86_64/x86_64_ubuntu20_gcc11-0.1.0.tar.xz"),
-            build_file = Label("//cc/config/x86_64_ubuntu20_gcc11:sysroot.BUILD"),
-            strip_prefix = "x86_64_ubuntu20_gcc11-0.1.0",
+            sha256 = "1a83c11c5d289fc9b47e8780c0e010fa718c06e459fe938b94274579cb5322bb",
+            mirrored_tar_sha256 = "8dc6dcce56aa2af8d177775cd3a484cbb85a173a988193cafca605ec409f8836",
+            urls = tf_mirror_urls("https://storage.googleapis.com/ml-sysroot-testing/x86_64/x86_64_ubuntu20_gcc13-0.1.0.tar.xz"),
+            build_file = Label("//cc/config/x86_64_ubuntu20_gcc13:sysroot.BUILD"),
+            strip_prefix = "x86_64_ubuntu20_gcc13-0.1.0",
         )
 
     if "sysroot_linux_x86_64_glibc_2_35" not in native.existing_rules():
