@@ -19,7 +19,6 @@
 
 load("@local_config_cuda//cuda:build_defs.bzl", "if_cuda", "if_cuda_hermetic_clang")
 load("@rules_cc//cc:defs.bzl", "cc_toolchain")
-load("//cc/layering_check:build_defs.bzl", "cc_toolchain_with_cppmap")
 load("//cc/sanitizers:features.bzl",
     "cc_toolchain_import_asan_feature",
     "cc_toolchain_import_asan_runtime_closure_feature")
@@ -249,7 +248,7 @@ cc_toolchain_config(
     tool_paths = CUDA_TOOLS,
 )
 
-cc_toolchain_with_cppmap(
+cc_toolchain(
     name = "toolchain",
     all_files = ":all",
     ar_files = ":ar",

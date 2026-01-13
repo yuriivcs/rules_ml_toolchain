@@ -27,7 +27,10 @@ RUN apt-get update
 
 RUN add-apt-repository ppa:ubuntu-toolchain-r/test
 
-RUN apt-get -y install gcc-13 g++-13
+RUN apt-get -y install \
+    gcc-13 g++-13 \
+    libomp-dev \
+    patchelf
 
 RUN rm -rf /usr/include/c++/9
 RUN rm -rf /usr/include/x86_64-linux-gnu/c++/9
@@ -61,9 +64,9 @@ RUN ln -sfn ../../../lib/x86_64-linux-gnu/libthread_db.so.1 ./libthread_db.so
 #WORKDIR /lib/x86_64-linux-gnu
 
 # Patch libomp.so.5 to custom soname for import
-#RUN cp libomp.so.5 libomp-hermetic.so
-#RUN patchelf --set-soname libomp-hermetic.so libomp-hermetic.so
-#RUN cp /usr/share/doc/libomp-dev/copyright /usr/lib/x86_64-linux-gnu/libomp-copyright
+RUN cp libomp.so.5 libomp-hermetic.so
+RUN patchelf --set-soname libomp-hermetic.so libomp-hermetic.so
+RUN cp /usr/share/doc/libomp-dev/copyright /usr/lib/x86_64-linux-gnu/libomp-copyright
 
 WORKDIR /root
 

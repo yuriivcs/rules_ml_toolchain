@@ -76,8 +76,8 @@ def cc_toolchain_deps():
         # C++20, manylinux_2_31, gcc-13
         mirrored_http_archive(
             name = "sysroot_linux_x86_64_glibc_2_31",
-            sha256 = "1a83c11c5d289fc9b47e8780c0e010fa718c06e459fe938b94274579cb5322bb",
-            mirrored_tar_sha256 = "8dc6dcce56aa2af8d177775cd3a484cbb85a173a988193cafca605ec409f8836",
+            sha256 = "f3ca471f60c41695014425b3ec664ca41fba36e8fa369c20b38bf3fe6d193d31",
+            mirrored_tar_sha256 = "746cc760cb717d7f7e3c5294714c231a93bbb5c348fc21597ab9c472c227437a",
             urls = tf_mirror_urls("https://storage.googleapis.com/ml-sysroot-testing/x86_64/x86_64_ubuntu20_gcc13-0.1.0.tar.xz"),
             build_file = Label("//cc/config/x86_64_ubuntu20_gcc13:sysroot.BUILD"),
             strip_prefix = "x86_64_ubuntu20_gcc13-0.1.0",

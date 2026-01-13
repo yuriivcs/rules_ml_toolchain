@@ -17,7 +17,6 @@
 # Tools: Linux x86_64, Sysroot: Linux x86_64
 # ==============================================================================
 
-load("//cc/layering_check:build_defs.bzl", "cc_toolchain_with_cppmap")
 load("//cc/sanitizers:features.bzl",
     "cc_toolchain_import_asan_feature",
     "cc_toolchain_import_asan_runtime_closure_feature")
@@ -199,7 +198,7 @@ cc_toolchain_config(
     target_system_name = "local",
 )
 
-cc_toolchain_with_cppmap(
+cc_toolchain(
     name = "toolchain",
     all_files = ":all",
     ar_files = ":ar",

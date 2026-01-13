@@ -100,7 +100,7 @@ cc_toolchain_import(
     name = "stdc++",
     additional_libs = [
         "usr/lib/x86_64-linux-gnu/libstdc++.so.6",
-        "usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.28",
+        "usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.32",
     ],
     shared_library = "usr/lib/gcc/x86_64-linux-gnu/{gcc_version}/libstdc++.so".format(gcc_version = GCC_VERSION),
     static_library = "usr/lib/gcc/x86_64-linux-gnu/{gcc_version}/libstdc++.a".format(gcc_version = GCC_VERSION),
