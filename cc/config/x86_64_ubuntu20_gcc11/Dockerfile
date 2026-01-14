@@ -21,7 +21,9 @@ ARG DEBIAN_FRONTEND=noninteractive
 RUN apt-get update
 RUN apt-get -y install \
     build-essential \
-    software-properties-common
+    software-properties-common \
+    libomp-dev \
+    patchelf
 
 RUN apt-get update
 
@@ -58,13 +60,11 @@ RUN ln -sfn ../../../lib/x86_64-linux-gnu/libresolv.so.2 ./libresolv.so
 RUN ln -sfn ../../../lib/x86_64-linux-gnu/librt.so.1 ./librt.so
 RUN ln -sfn ../../../lib/x86_64-linux-gnu/libthread_db.so.1 ./libthread_db.so
 
-#WORKDIR /lib/x86_64-linux-gnu
+WORKDIR /lib/x86_64-linux-gnu
 
 # Patch libomp.so.5 to custom soname for import
-#RUN cp libomp.so.5 libomp-hermetic.so
-#RUN patchelf --set-soname libomp-hermetic.so libomp-hermetic.so
-#RUN cp /usr/share/doc/libomp-dev/copyright /usr/lib/x86_64-linux-gnu/libomp-copyright
+RUN cp libomp.so.5 libomp-hermetic.so
+RUN patchelf --set-soname libomp-hermetic.so libomp-hermetic.so
+RUN cp /usr/share/doc/libomp-dev/copyright /usr/lib/x86_64-linux-gnu/libomp-copyright
 
 WORKDIR /root
-
-
