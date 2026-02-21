@@ -91,11 +91,14 @@ def _filter_flags_by_keys(flags, keys):
 
 ASAN_COMPILER_FLAGS = [
     "-fsanitize=address",
+    "-shared-libasan",
+    "-fno-omit-frame-pointer",
     "-fno-common",  # for backward compatibility with old toolchain sanitizer configuration
 ]
 
 ASAN_LINKER_FLAGS = [
-    "-fsanitize=address",           # mandatory for linking
+    "-fsanitize=address",   # mandatory for linking
+    "-shared-libasan",
 ]
 
 def _import_asan_feature_impl(ctx):
