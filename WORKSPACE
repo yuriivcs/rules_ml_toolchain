@@ -75,7 +75,7 @@ python_init_repositories(
 
 load("//py:python_init_toolchains.bzl", "python_init_toolchains")
 
-python_init_toolchains(python_version = "3.11")
+python_init_toolchains()
 
 load("//py:python_configure.bzl", "python_configure")
 python_configure(name = "local_config_python")
