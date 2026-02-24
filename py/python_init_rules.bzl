@@ -29,9 +29,6 @@ def python_init_rules(extra_patches = []):
         urls = tf_mirror_urls("https://github.com/bazelbuild/rules_cc/archive/refs/tags/0.1.0.tar.gz"),
         strip_prefix = "rules_cc-0.1.0",
         sha256 = "4b12149a041ddfb8306a8fd0e904e39d673552ce82e4296e96fac9cbf0780e59",
-        patch_file = [
-            "@rules_ml_toolchain//py:rules_cc_protobuf.patch",
-        ],
     )
 
     tf_http_archive(
@@ -50,9 +47,5 @@ def python_init_rules(extra_patches = []):
         sha256 = "fa7dd2c6b7d63b3585028dd8a90a6cf9db83c33b250959c2ee7b583a6c130e12",
         strip_prefix = "rules_python-1.6.0",
         urls = tf_mirror_urls("https://github.com/bazelbuild/rules_python/releases/download/1.6.0/rules_python-1.6.0.tar.gz"),
-        patch_file = [
-            "@rules_ml_toolchain//py:rules_python_pip_version.patch",
-            "@rules_ml_toolchain//py:rules_python_freethreaded.patch",
-            "@rules_ml_toolchain//py:rules_python_versions.patch",
-        ] + extra_patches,
+        patch_file = extra_patches,
     )
