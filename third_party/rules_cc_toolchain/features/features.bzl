@@ -323,12 +323,14 @@ def _import_feature_impl(ctx):
 
     linker_flags_for_shared_obj = depset(_filter_for_shared_obj([
         _file_to_library_flag(file)
-        for file in toolchain_import_info
-            .linking_context.static_libraries.to_list()
+        for file in toolchain_import_info.linking_context.static_libraries.to_list()
+        if file.basename != "libstdc++.a"
     ]) + [
+        "-l:libstdc++.a",
+    ] + [
         _file_to_library_flag(file)
-        for file in toolchain_import_info
-            .linking_context.dynamic_libraries.to_list()
+        for file in toolchain_import_info.linking_context.dynamic_libraries.to_list()
+        if file.basename != "libstdc++.so"
     ]).to_list()
 
     if linker_dir_flags or linker_flags_for_shared_obj:
