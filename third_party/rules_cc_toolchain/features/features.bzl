@@ -257,14 +257,27 @@ def _import_feature_impl(ctx):
             .linking_context.additional_libs.to_list()
     ]).to_list()
 
+#    print("----------------------------- Static Libraries -----------------------------")
+#    for file in toolchain_import_info.linking_context.static_libraries.to_list():
+#        print("_import_feature_impl: ", file, " Flag: ", _file_to_library_flag(file))
+#
+#    print("----------------------------- Dynamic Libraries -----------------------------")
+#    for file in toolchain_import_info.linking_context.dynamic_libraries.to_list():
+#        print("_import_feature_impl: ", file, " Flag: ", _file_to_library_flag(file))
+
+
     linker_flags = depset([
         _file_to_library_flag(file)
-        for file in toolchain_import_info
-            .linking_context.static_libraries.to_list()
-    ] + [
+        for file in toolchain_import_info.linking_context.static_libraries.to_list()
+        if file.basename != "libstdc++.a"
+    ] +
+    [
+        "-l:libstdc++.a",
+    ] +
+    [
         _file_to_library_flag(file)
-        for file in toolchain_import_info
-            .linking_context.dynamic_libraries.to_list()
+        for file in toolchain_import_info.linking_context.dynamic_libraries.to_list()
+        if file.basename != "libstdc++.so"
     ]).to_list()
 
     flag_sets = []
