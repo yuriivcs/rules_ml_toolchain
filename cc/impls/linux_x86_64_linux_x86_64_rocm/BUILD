@@ -1,3 +1,5 @@
+load("@local_sysroot_config//:defs.bzl", "local_sysroot_info")
+
 # Copyright 2026 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -76,9 +78,19 @@ filegroup(
     ],
 )
 
+cc_toolchain_import(
+    name = "empty_startup_libs",
+    deps = [],
+)
+
 alias(
     name = "startup_libs",
-    actual = "@sysroot_linux_x86_64//:startup_libs",
+    actual = select({
+        # Local sysroot: startup libs via --sysroot flag
+        "//cc/sysroots:local_sysroot_enabled": ":empty_startup_libs",
+        # Hermetic sysroot: use hermetic startup libs
+        "//conditions:default": "@sysroot_linux_x86_64//:startup_libs",
+    }),
     visibility = ["//visibility:public"],
 )
 
@@ -92,14 +104,22 @@ cc_toolchain_import_feature(
 cc_toolchain_import(
     name = "imports",
     deps = [
-        # Hermetic LLVM headers for host compilation
-        # ROCm LLVM headers are in rocm_toolkit_files and added via hipcc_wrapper for GPU
+        # Hermetic LLVM headers
         "@llvm_linux_x86_64//:includes",
         "@llvm_linux_x86_64//:libclang_rt",
+        # Always include hermetic sysroot headers - needed for GPU compilation
+        # GPU compilation requires hermetic headers (system headers incompatible with ROCm clang)
+        # Host compilation will use system headers when HOST_SYSROOT is set (via wrapper override)
         "@sysroot_linux_x86_64//:includes_c",
         "@sysroot_linux_x86_64//:includes_system",
-        "@sysroot_linux_x86_64//:sys_libs",
-    ],
+    ] + select({
+        # Local sysroot: don't include hermetic libs (use system libs via --sysroot=/)
+        "//cc/sysroots:local_sysroot_enabled": [],
+        # Hermetic sysroot: use hermetic libs
+        "//conditions:default": [
+            "@sysroot_linux_x86_64//:sys_libs",
+        ],
+    }),
     visibility = ["//visibility:public"],
 )
 
@@ -172,10 +192,15 @@ filegroup(
 # Features
 # =============================================================================
 
-FEATURES_ESSENTIAL = [
-    # Hermetic libraries (must come first)
-    "//third_party/rules_cc_toolchain/features:hermetic_libraries",
-
+FEATURES_ESSENTIAL = select({
+    # Local sysroot: DO NOT use hermetic_libraries (no -nostdinc/-nostdinc++)
+    # We want to use system headers and libraries
+    "//cc/sysroots:local_sysroot_enabled": [
+        "//cc/features:local_sysroot_default_libs",
+    ],
+    # Hermetic sysroot: use hermetic_libraries feature
+    "//conditions:default": ["//third_party/rules_cc_toolchain/features:hermetic_libraries"],
+}) + [
     # Library imports
     ":imports_feature",
     ":startup_libs_feature",
@@ -190,8 +215,10 @@ FEATURES_ESSENTIAL = [
     "//third_party/rules_cc_toolchain/features:warnings",
     "//third_party/rules_cc_toolchain/features:reproducible",
     "//third_party/rules_cc_toolchain/features:use_lld",
-    "//cc/features:sysroot_linux_x86_64",
-
+] + select({
+    "//cc/sysroots:local_sysroot_enabled": ["//cc/features:local_sysroot_linux"],
+    "//conditions:default": ["//cc/features:sysroot_linux_x86_64"],
+}) + [
     # PIC / PIE flags
     "//third_party/rules_cc_toolchain/features:supports_pic",
     "//third_party/rules_cc_toolchain/features:position_independent_code",
@@ -224,6 +251,12 @@ cc_toolchain_config(
     c_compiler = "@llvm_linux_x86_64//:clang",
     cc_compiler = "@llvm_linux_x86_64//:clang++",
     compiler_features = FEATURES_ESSENTIAL,
+    cxx_builtin_include_directories = select({
+        # Local sysroot: use dynamically detected system include paths
+        "//cc/sysroots:local_sysroot_enabled": local_sysroot_info.include_directories,
+        # Hermetic sysroot: no system directories
+        "//conditions:default": [],
+    }),
     linker = "@llvm_linux_x86_64//:ld",
     strip_tool = "@llvm_linux_x86_64//:strip",
     target_cpu = "x86_64",
