@@ -86,7 +86,7 @@ cc_toolchain_import(
 )
 
 cc_toolchain_import(
-    name = "gcc",
+    name = "libgcc",
     additional_libs = [
         "lib/aarch64-linux-gnu/libgcc_s.so.1",
         "usr/lib/gcc/aarch64-linux-gnu/{gcc_version}/libgcc_eh.a".format(gcc_version = GCC_VERSION),
@@ -98,7 +98,7 @@ cc_toolchain_import(
 )
 
 cc_toolchain_import(
-    name = "stdc++",
+    name = "libstdc++",
     additional_libs = [
         "usr/lib/aarch64-linux-gnu/libstdc++.so.6",
         "usr/lib/aarch64-linux-gnu/libstdc++.so.6.0.28",
@@ -109,7 +109,7 @@ cc_toolchain_import(
 )
 
 cc_toolchain_import(
-    name = "dynamic_linker",
+    name = "libdl",
     additional_libs = [
         "lib/ld-linux-aarch64.so.1",
         "lib/aarch64-linux-gnu/ld-linux-aarch64.so.1",
@@ -121,7 +121,7 @@ cc_toolchain_import(
 )
 
 cc_toolchain_import(
-    name = "math",
+    name = "libm",
     additional_libs = ["lib/aarch64-linux-gnu/libm.so.6"],
     shared_library = "usr/lib/aarch64-linux-gnu/libm.so",
     static_library = "usr/lib/aarch64-linux-gnu/libm.a",
@@ -129,7 +129,7 @@ cc_toolchain_import(
 )
 
 cc_toolchain_import(
-    name = "pthread",
+    name = "libpthread",
     additional_libs = [
         "lib/aarch64-linux-gnu/libpthread.so.0",
         "lib/aarch64-linux-gnu/libpthread-{glibc_version}.so".format(glibc_version = GLIBC_VERSION),
@@ -143,7 +143,7 @@ cc_toolchain_import(
 )
 
 cc_toolchain_import(
-    name = "rt",
+    name = "librt",
     additional_libs = [
         "lib/aarch64-linux-gnu/librt-{glibc_version}.so".format(glibc_version = GLIBC_VERSION),
         "lib/aarch64-linux-gnu/librt.so.1",
@@ -164,22 +164,22 @@ cc_toolchain_import(
     static_library = "usr/lib/aarch64-linux-gnu/libc.a",
     visibility = ["//visibility:public"],
     deps = [
-        ":gcc",
-        ":math",
-        ":stdc++",
-        ":rt",
+        ":libgcc",
+        ":libm",
+        ":libstdc++",
+        ":librt",
     ],
 )
 
 # This is a group of essential system libraries. The actual glibc library is split
 # out to fix link ordering problems that cause false undefined symbol positives.
 cc_toolchain_import(
-    name = "syslibs",
+    name = "sys_libs",
     visibility = ["//visibility:public"],
     deps = [
-        ":dynamic_linker",
+        ":libdl",
         ":libc",
-        ":pthread",
+        ":libpthread",
     ],
 )
 

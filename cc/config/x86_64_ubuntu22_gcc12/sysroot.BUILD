@@ -86,7 +86,7 @@ cc_toolchain_import(
 )
 
 cc_toolchain_import(
-    name = "gcc",
+    name = "libgcc",
     additional_libs = [
         "lib/x86_64-linux-gnu/libgcc_s.so.1",
         "usr/lib/gcc/x86_64-linux-gnu/{gcc_version}/libgcc_eh.a".format(gcc_version = GCC_VERSION),
@@ -97,7 +97,7 @@ cc_toolchain_import(
 )
 
 cc_toolchain_import(
-    name = "stdc++",
+    name = "libstdc++",
     additional_libs = [
         "usr/lib/x86_64-linux-gnu/libstdc++.so.6",
         "usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.30",
@@ -108,7 +108,7 @@ cc_toolchain_import(
 )
 
 cc_toolchain_import(
-    name = "dynamic_linker",
+    name = "libdl",
     additional_libs = [
         "lib64/ld-linux-x86-64.so.2",
         "lib/x86_64-linux-gnu/ld-linux-x86-64.so.2",
@@ -120,7 +120,7 @@ cc_toolchain_import(
 )
 
 cc_toolchain_import(
-    name = "math",
+    name = "libm",
     additional_libs = [
         "lib/x86_64-linux-gnu/libm.so.6",
         "lib/x86_64-linux-gnu/libmvec.so.1",
@@ -133,7 +133,7 @@ cc_toolchain_import(
 )
 
 cc_toolchain_import(
-    name = "pthread",
+    name = "libpthread",
     additional_libs = [
         "usr/lib/x86_64-linux-gnu/libpthread.so.0",
     ],
@@ -146,7 +146,7 @@ cc_toolchain_import(
 )
 
 cc_toolchain_import(
-    name = "rt",
+    name = "librt",
     additional_libs = [
         "usr/lib/x86_64-linux-gnu/librt.so.1",
         "usr/lib/x86_64-linux-gnu/librt.a",
@@ -164,22 +164,22 @@ cc_toolchain_import(
     static_library = "usr/lib/x86_64-linux-gnu/libc.a",
     visibility = ["//visibility:public"],
     deps = [
-        ":gcc",
-        ":math",
-        ":stdc++",
-        ":rt",
+        ":libgcc",
+        ":libm",
+        ":libstdc++",
+        ":librt",
     ],
 )
 
 # This is a group of essential system libraries. The actual glibc library is split
 # out to fix link ordering problems that cause false undefined symbol positives.
 cc_toolchain_import(
-    name = "syslibs",
+    name = "sys_libs",
     visibility = ["//visibility:public"],
     deps = [
-        ":dynamic_linker",
+        ":libdl",
         ":libc",
-        ":pthread",
+        ":libpthread",
     ],
 )
 

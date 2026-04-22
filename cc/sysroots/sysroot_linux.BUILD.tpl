@@ -20,12 +20,6 @@ alias(
 )
 
 alias(
-    name = "startup_libs",
-    actual = "@@%{sysroot_repo_name}//:startup_libs",
-    visibility = ["//visibility:public"],
-)
-
-alias(
     name = "includes_c",
     actual = "@@%{sysroot_repo_name}//:includes_c",
     visibility = ["//visibility:public"],
@@ -44,14 +38,20 @@ alias(
 )
 
 alias(
-    name = "syslibs",
-    actual = "@@%{sysroot_repo_name}//:syslibs",
+    name = "startup_libs",
+    actual = "@@%{sysroot_repo_name}//:startup_libs",
     visibility = ["//visibility:public"],
 )
 
 alias(
-    name = "pthread",
-    actual = "@@%{sysroot_repo_name}//:pthread",
+    name = "std_libs",
+    actual = "@@%{sysroot_repo_name}//:std_libs",
+    visibility = ["//visibility:public"],
+)
+
+alias(
+    name = "sys_libs",
+    actual = "@@%{sysroot_repo_name}//:sys_libs",
     visibility = ["//visibility:public"],
 )
 

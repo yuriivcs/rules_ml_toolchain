@@ -58,7 +58,7 @@ cc_toolchain_import(
         "@sysroot_linux_x86_64//:includes_c",
         "@llvm_linux_x86_64//:includes",
         "@sysroot_linux_x86_64//:includes_system",
-        "@sysroot_linux_x86_64//:syslibs",
+        "@sysroot_linux_x86_64//:sys_libs",
         "@sysroot_linux_x86_64//:openmp",
         "@llvm_linux_x86_64//:libclang_rt",
     ],

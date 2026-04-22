@@ -98,7 +98,7 @@ cc_toolchain_import(
         "@llvm_linux_x86_64//:libclang_rt",
         "@sysroot_linux_x86_64//:includes_c",
         "@sysroot_linux_x86_64//:includes_system",
-        "@sysroot_linux_x86_64//:syslibs",
+        "@sysroot_linux_x86_64//:sys_libs",
     ],
     visibility = ["//visibility:public"],
 )

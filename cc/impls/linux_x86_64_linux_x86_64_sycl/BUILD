@@ -77,7 +77,7 @@ cc_toolchain_import(
         "@sysroot_linux_x86_64//:includes_c",
         "@oneapi//:includes",
         "@sysroot_linux_x86_64//:includes_system",
-        "@sysroot_linux_x86_64//:syslibs",
+        "@sysroot_linux_x86_64//:sys_libs",
         "@oneapi//:core",
         "@oneapi//:libclang_rt",
     ],
