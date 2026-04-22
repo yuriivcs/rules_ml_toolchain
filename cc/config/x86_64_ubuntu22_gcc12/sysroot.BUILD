@@ -163,24 +163,30 @@ cc_toolchain_import(
     shared_library = "usr/lib/x86_64-linux-gnu/libc.so",
     static_library = "usr/lib/x86_64-linux-gnu/libc.a",
     visibility = ["//visibility:public"],
-    deps = [
-        ":libgcc",
-        ":libm",
-        ":libstdc++",
-        ":librt",
-    ],
 )
 
-# This is a group of essential system libraries. The actual glibc library is split
-# out to fix link ordering problems that cause false undefined symbol positives.
+# This is a group of GCC libraries
+cc_toolchain_import(
+    name = "std_libs",
+    deps = [
+        ":libgcc",
+        ":libstdc++",
+    ],
+    visibility = ["//visibility:public"],
+)
+
+# This is a group of system libraries
 cc_toolchain_import(
     name = "sys_libs",
-    visibility = ["//visibility:public"],
     deps = [
         ":libdl",
         ":libc",
         ":libpthread",
+        ":libm",
+        ":librt",
+        #":libasan",
     ],
+    visibility = ["//visibility:public"],
 )
 
 #============================================================================================
