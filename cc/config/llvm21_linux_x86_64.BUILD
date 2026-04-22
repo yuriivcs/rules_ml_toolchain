@@ -125,9 +125,11 @@ cc_toolchain_import(
     name = "std_incs",
     hdrs = glob([
         "include/c++/v1/**",
+        "include/x86_64-unknown-linux-gnu/c++/v1/**",
     ]),
     includes = [
         "include/c++/v1",
+        "include/x86_64-unknown-linux-gnu/c++/v1",
     ],
     visibility = ["//visibility:public"],
 )

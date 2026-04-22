@@ -55,14 +55,15 @@ cc_toolchain_import_feature(
 cc_toolchain_import(
     name = "imports",
     deps = [
-        "@sysroot_linux_x86_64//:std_incs",
-        #"@llvm_linux_x86_64//:std_incs",
+        #"@sysroot_linux_x86_64//:std_incs",
+        "@llvm_linux_x86_64//:std_incs",
         "@llvm_linux_x86_64//:compiler_incs",
         "@sysroot_linux_x86_64//:sys_incs",
+        #"@sysroot_linux_x86_64//:std_libs",
+        "@llvm_linux_x86_64//:std_libs",
         "@sysroot_linux_x86_64//:sys_libs",
         "@sysroot_linux_x86_64//:openmp",
         "@llvm_linux_x86_64//:libclang_rt",
-        "@sysroot_linux_x86_64//:std_libs",
     ],
     visibility = ["//visibility:public"],
 )
@@ -169,6 +170,8 @@ filegroup(
 
 FEATURES_ESSENTIAL = [
     "//third_party/rules_cc_toolchain/features:hermetic_libraries",  # Hermetic libraries feature required before import
+    # TODO: Add select() for turn off this option when libstdc++ is used
+    "//cc/features:libc++",
     ":imports_feature",
 
     # Toolchain configuration

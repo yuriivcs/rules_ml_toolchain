@@ -213,3 +213,11 @@ cc_feature(
     ],
     provides = ["compilation_mode"],
 )
+
+cc_feature(
+    name = "libc++",
+    linker_flags = [
+        "-stdlib=libc++",
+    ],
+    enabled = True,
+)
