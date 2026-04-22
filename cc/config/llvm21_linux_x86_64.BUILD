@@ -122,7 +122,7 @@ cc_toolchain_import(
 # Headers and libraries for portable binaries
 
 cc_toolchain_import(
-    name = "c_incs",
+    name = "std_incs",
     hdrs = glob([
         "include/c++/v1/**",
     ]),

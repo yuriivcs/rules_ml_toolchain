@@ -55,7 +55,7 @@ cc_toolchain_import(
 )
 
 cc_toolchain_import(
-    name = "c_incs",
+    name = "std_incs",
     hdrs = glob([
         "usr/include/c++/{gcc_version}/**".format(gcc_version = GCC_VERSION),
         "usr/include/aarch64-linux-gnu/c++/{gcc_version}/*/**".format(gcc_version = GCC_VERSION),

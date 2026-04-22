@@ -110,7 +110,7 @@ cc_toolchain_import(
         # Always include hermetic sysroot headers - needed for GPU compilation
         # GPU compilation requires hermetic headers (system headers incompatible with ROCm clang)
         # Host compilation will use system headers when HOST_SYSROOT is set (via wrapper override)
-        "@sysroot_linux_x86_64//:c_incs",
+        "@sysroot_linux_x86_64//:std_incs",
         "@sysroot_linux_x86_64//:sys_incs",
         "@sysroot_linux_x86_64//:std_libs",
     ] + select({

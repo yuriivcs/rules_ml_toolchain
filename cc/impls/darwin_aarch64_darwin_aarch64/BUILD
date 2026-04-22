@@ -40,7 +40,7 @@ filegroup(
 cc_toolchain_import(
     name = "imports",
     deps = [
-        "@sysroot_darwin_aarch64//:c_incs",
+        "@sysroot_darwin_aarch64//:std_incs",
         "@llvm_darwin_aarch64//:compiler_incs",
         "@sysroot_darwin_aarch64//:sys_incs",
         "@sysroot_darwin_aarch64//:sys_libs",

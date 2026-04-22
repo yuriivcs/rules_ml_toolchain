@@ -74,7 +74,7 @@ cc_toolchain_import_feature(
 cc_toolchain_import(
     name = "imports",
     deps = [
-        "@sysroot_linux_x86_64//:c_incs",
+        "@sysroot_linux_x86_64//:std_incs",
         "@oneapi//:compiler_incs",
         "@sysroot_linux_x86_64//:sys_incs",
         "@sysroot_linux_x86_64//:sys_libs",

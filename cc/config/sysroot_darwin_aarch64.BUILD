@@ -28,7 +28,7 @@ sysroot_package(
 )
 
 cc_toolchain_import(
-    name = "c_incs",
+    name = "std_incs",
     hdrs = glob([
         "usr/include/c++/v1/**",
     ]),

@@ -93,7 +93,7 @@ cc_toolchain_import(
     name = "imports",
     deps = [
         "@rules_ml_toolchain//cc/cuda/clang:inject_cuda_runtime_wrapper",
-        "@sysroot_linux_aarch64//:c_incs",
+        "@sysroot_linux_aarch64//:std_incs",
         "@llvm_linux_aarch64//:compiler_incs",
         "@sysroot_linux_aarch64//:sys_incs",
         "@sysroot_linux_aarch64//:sys_libs",

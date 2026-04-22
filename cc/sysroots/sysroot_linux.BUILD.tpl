@@ -20,8 +20,8 @@ alias(
 )
 
 alias(
-    name = "c_incs",
-    actual = "@@%{sysroot_repo_name}//:c_incs",
+    name = "std_incs",
+    actual = "@@%{sysroot_repo_name}//:std_incs",
     visibility = ["//visibility:public"],
 )
 
