@@ -28,7 +28,7 @@ sysroot_package(
 )
 
 cc_toolchain_import(
-    name = "includes_c",
+    name = "c_incs",
     hdrs = glob([
         "usr/include/c++/v1/**",
     ]),
@@ -43,7 +43,7 @@ cc_toolchain_import(
 )
 
 cc_toolchain_import(
-    name = "includes_system",
+    name = "sys_incs",
     hdrs = glob([
         "usr/include/**",
         "System/Library/Frameworks/CoreFoundation/**",  # Include created symbolic link directory

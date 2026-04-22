@@ -92,7 +92,7 @@ filegroup(
 )
 
 cc_toolchain_import(
-    name = "includes",
+    name = "compiler_incs",
     hdrs = glob([
         "lib/clang/{clang_version}/include/**".format(clang_version = CLANG_VERSION),
         "lib/clang/{clang_version}/include/cuda_wrappers/**".format(clang_version = CLANG_VERSION),

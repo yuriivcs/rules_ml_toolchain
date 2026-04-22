@@ -99,12 +99,13 @@ cc_toolchain_import(
     name = "imports",
     deps = [
         "@rules_ml_toolchain//cc/cuda/clang:inject_cuda_runtime_wrapper",
-        "@sysroot_linux_x86_64//:includes_c",
-        "@llvm_linux_x86_64//:includes",
-        "@sysroot_linux_x86_64//:includes_system",
+        "@sysroot_linux_x86_64//:c_incs",
+        "@llvm_linux_x86_64//:compiler_incs",
+        "@sysroot_linux_x86_64//:sys_incs",
         "@sysroot_linux_x86_64//:sys_libs",
         "@sysroot_linux_x86_64//:openmp",
         "@llvm_linux_x86_64//:libclang_rt",
+        "@sysroot_linux_x86_64//:std_libs",
     ],
     visibility = ["//visibility:public"],
 )

@@ -20,20 +20,14 @@ alias(
 )
 
 alias(
-    name = "includes_c",
-    actual = "@@%{sysroot_repo_name}//:includes_c",
+    name = "c_incs",
+    actual = "@@%{sysroot_repo_name}//:c_incs",
     visibility = ["//visibility:public"],
 )
 
 alias(
-    name = "includes",
-    actual = "@@%{sysroot_repo_name}//:includes",
-    visibility = ["//visibility:public"],
-)
-
-alias(
-    name = "includes_system",
-    actual = "@@%{sysroot_repo_name}//:includes_system",
+    name = "sys_incs",
+    actual = "@@%{sysroot_repo_name}//:sys_incs",
     visibility = ["//visibility:public"],
 )
 
@@ -55,6 +49,7 @@ alias(
     visibility = ["//visibility:public"],
 )
 
+# Libraries for export
 alias(
     name = "openmp",
     actual = "@@%{sysroot_repo_name}//:openmp",

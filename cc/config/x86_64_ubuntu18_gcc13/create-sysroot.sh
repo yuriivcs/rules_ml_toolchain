@@ -1,1 +1,0 @@
-../create-linux-x86_64-sysroot.sh

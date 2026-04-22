@@ -55,7 +55,7 @@ cc_toolchain_import(
 )
 
 cc_toolchain_import(
-    name = "includes_c",
+    name = "c_incs",
     hdrs = glob([
         "usr/include/c++/{gcc_version}/**".format(gcc_version = GCC_VERSION),
         "usr/include/aarch64-linux-gnu/c++/{gcc_version}/*/**".format(gcc_version = GCC_VERSION),
@@ -71,7 +71,7 @@ cc_toolchain_import(
 )
 
 cc_toolchain_import(
-    name = "includes_system",
+    name = "sys_incs",
     hdrs = glob([
         #"usr/local/include/**",            # Uncomment this line if files exist in this directory; otherwise, the build will fail with the --incompatible_disallow_empty_glob=false flag
         "usr/include/aarch64-linux-gnu/**",

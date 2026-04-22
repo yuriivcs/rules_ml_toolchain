@@ -90,7 +90,7 @@ filegroup(
 )
 
 cc_toolchain_import(
-    name = "includes",
+    name = "compiler_incs",
     hdrs = glob([
         "lib/clang/{clang_version}/include/**".format(clang_version = CLANG_VERSION),
         "lib/clang/{clang_version}/include/cuda_wrappers/**".format(clang_version = CLANG_VERSION),
@@ -122,7 +122,7 @@ cc_toolchain_import(
 # Headers and libraries for portable binaries
 
 cc_toolchain_import(
-    name = "includes_c",
+    name = "c_incs",
     hdrs = glob([
         "include/c++/v1/**",
     ]),

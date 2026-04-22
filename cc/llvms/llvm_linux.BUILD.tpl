@@ -112,8 +112,14 @@ alias(
 )
 
 alias(
-    name = "includes",
-    actual = "@@%{llvm_repo_name}//:includes",
+    name = "compiler_incs",
+    actual = "@@%{llvm_repo_name}//:compiler_incs",
+    visibility = ["//visibility:public"],
+)
+
+alias(
+    name = "std_libs",
+    actual = "@@%{llvm_repo_name}//:std_libs",
     visibility = ["//visibility:public"],
 )
 

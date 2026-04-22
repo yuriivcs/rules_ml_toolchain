@@ -40,9 +40,9 @@ filegroup(
 cc_toolchain_import(
     name = "imports",
     deps = [
-        "@sysroot_darwin_aarch64//:includes_c",
-        "@llvm_linux_x86_64//:includes",
-        "@sysroot_darwin_aarch64//:includes_system",
+        "@sysroot_darwin_aarch64//:c_incs",
+        "@llvm_linux_x86_64//:compiler_incs",
+        "@sysroot_darwin_aarch64//:sys_incs",
         "@sysroot_darwin_aarch64//:sys_libs",
     ],
     visibility = ["//visibility:public"],
