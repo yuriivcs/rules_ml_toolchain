@@ -258,6 +258,10 @@ def _import_feature_impl(ctx):
     ]).to_list()
 
     linker_flags = depset([
+        "-l:libc++.a",
+        "-l:libc++abi.a",
+        "-l:libunwind.a",
+    ] + [
         _file_to_library_flag(file)
         for file in toolchain_import_info
             .linking_context.static_libraries.to_list()
@@ -308,7 +312,11 @@ def _import_feature_impl(ctx):
             ],
         ))
 
-    linker_flags_for_shared_obj = depset(_filter_for_shared_obj([
+    linker_flags_for_shared_obj = depset([
+        "-l:libc++.a",
+        "-l:libc++abi.a",
+        "-l:libunwind.a",
+    ] + _filter_for_shared_obj([
         _file_to_library_flag(file)
         for file in toolchain_import_info
             .linking_context.static_libraries.to_list()
