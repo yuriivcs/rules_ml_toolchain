@@ -99,13 +99,15 @@ cc_toolchain_import(
     name = "imports",
     deps = [
         "@rules_ml_toolchain//cc/cuda/clang:inject_cuda_runtime_wrapper",
-        "@sysroot_linux_x86_64//:std_incs",
+        #"@sysroot_linux_x86_64//:std_incs",
+        "@llvm_linux_x86_64//:std_incs",
         "@llvm_linux_x86_64//:compiler_incs",
         "@sysroot_linux_x86_64//:sys_incs",
+        #"@sysroot_linux_x86_64//:std_libs",
+        "@llvm_linux_x86_64//:std_libs",
         "@sysroot_linux_x86_64//:sys_libs",
         "@sysroot_linux_x86_64//:openmp",
         "@llvm_linux_x86_64//:libclang_rt",
-        "@sysroot_linux_x86_64//:std_libs",
     ],
     visibility = ["//visibility:public"],
 )
@@ -137,7 +139,7 @@ cc_toolchain_import_asan_feature(
     toolchain_import = ":asan_import",
 )
 
-cc_toolchain_import_asan_feature(
+cc_toolchain_import_tsan_feature(
     name = "tsan",
     toolchain_import = ":tsan_import",
 )
@@ -219,6 +221,8 @@ FEATURES_ESSENTIAL = [
     ":cuda_nvcc_feature",
     "//cc/cuda/features:hermetic",
     "//third_party/rules_cc_toolchain/features:hermetic_libraries",
+    # TODO: Add select() for turn off this option when libstdc++ is used
+    "//cc/cuda/features:libc++",
 
     # Toolchain configuration
     "//third_party/rules_cc_toolchain/features:warnings",

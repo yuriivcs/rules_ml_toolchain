@@ -50,3 +50,14 @@ cc_feature(
 #    ],
 #    enabled = True,
 #)
+
+cc_feature(
+    name = "libc++",
+    compiler_flags = [
+        "-D_ALLOW_UNSUPPORTED_LIBCPP",
+    ],
+    linker_flags = [
+        "-stdlib=libc++",
+    ],
+    enabled = True,
+)
