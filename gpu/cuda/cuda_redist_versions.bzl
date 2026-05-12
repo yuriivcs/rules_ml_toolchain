@@ -769,9 +769,7 @@ REDIST_VERSIONS_TO_BUILD_TEMPLATES = {
         "version_to_template": {
             "any": "//gpu/cuda/build_templates:cuda_cccl.BUILD.tpl",
         },
-        "version_to_patch": {
-            "13.2.75": "@rules_ml_toolchain//gpu/cuda/patches:string_view.patch",
-        },
+        "version_to_patch": { },
         "local": {
             "source_dirs": ["include", "lib"],
         },
