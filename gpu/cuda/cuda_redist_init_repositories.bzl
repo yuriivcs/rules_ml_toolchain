@@ -19,6 +19,7 @@ load(
     "get_local_templates",
     "get_redistribution_urls",
     "get_version_and_template_lists",
+    "get_version_and_patch_lists",
     "redist_init_repository",
 )
 load(
@@ -90,6 +91,14 @@ def cuda_redist_init_repositories(
         versions, templates = get_version_and_template_lists(
             repo_data["version_to_template"],
         )
+        patch_versions = None
+        patch_files = None
+        if redist_name in ["cuda_cccl"]:
+            patch_versions, patch_files = get_version_and_patch_lists(
+                repo_data["version_to_patch"],
+            )
+            print("cuda_redist_init_repositories: patch_files = ", patch_files)
+
         local_templates = get_local_templates(repo_data["local"], templates)
         local_source_dirs = repo_data["local"]["source_dirs"]
         local_path_env_var = repo_data["local"].get("local_path_env_var") or "LOCAL_CUDA_PATH"
@@ -112,4 +121,6 @@ def cuda_redist_init_repositories(
                 Label("@cuda_nvvm//:nvvm/bin/cicc"): "nvvm/bin/cicc",
                 Label("@cuda_nvvm//:nvvm/libdevice/libdevice.10.bc"): "nvvm/libdevice/libdevice.10.bc",
             } if repo_data["repo_name"] == "cuda_nvcc" else {},
+            patch_versions = patch_versions,
+            patch_files = patch_files,
         )

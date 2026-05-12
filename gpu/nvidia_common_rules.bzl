@@ -14,6 +14,8 @@
 
 """Common rules and functions for hermetic NVIDIA repositories."""
 
+#load("@bazel_tools//tools/build_defs/repo:utils.bzl", "patch")
+
 load("//common:tar_extraction_utils.bzl", "extract_tar_with_hermetic_tar_tool")
 load("//common:repo.bzl", "tf_mirror_urls")
 
@@ -310,7 +312,9 @@ def _download_redistribution(
         repository_ctx,
         arch_key,
         path_prefix,
-        mirrored_tar_path_prefix):
+        mirrored_tar_path_prefix,
+        #patchfile = None
+    ):
     # buildifier: disable=function-docstring-args
     """Downloads and extracts NVIDIA redistribution."""
     (url, sha256, custom_strip_prefix) = repository_ctx.attr.url_dict[arch_key]
@@ -335,6 +339,9 @@ def _download_redistribution(
         strip_prefix = custom_strip_prefix
     else:
         strip_prefix = archive_name
+
+    print("Extracting strip_prefix: {}".format(strip_prefix))  # buildifier: disable=print
+
     if url.endswith(".tar.xz") or url.endswith(".tar"):
         extract_tar_with_hermetic_tar_tool(repository_ctx, file_name, strip_prefix)
     else:
@@ -342,6 +349,10 @@ def _download_redistribution(
             archive = file_name,
             stripPrefix = strip_prefix,
         )
+
+    #if patchfile:
+    #    ctx.patch(patchfile)
+
     repository_ctx.delete(file_name)
 
 def _get_platform_architecture(repository_ctx):
@@ -419,6 +430,17 @@ def _use_downloaded_redistribution(repository_ctx):
         repository_ctx.attr.mirrored_tar_redist_path_prefix,
     )
 
+    if repository_ctx.attr.patch_files:
+        for patch_file in repository_ctx.attr.patch_files:
+            print("_use_downloaded_redistribution: ",
+                  " name = ", repository_ctx.attr.name,
+                  #" patch_versions = ", repository_ctx.attr.patch_versions,
+                  ", patch_file = ", patch_file)
+            repository_ctx.patch(
+                patch_file,
+                strip = 1, # Equivalent to -p1 in git apply
+            )
+
     lib_name_to_version_dict = get_lib_name_to_version_dict(repository_ctx)
     major_version = get_major_library_version(
         repository_ctx,
@@ -460,6 +482,8 @@ _redist_repo = repository_rule(
         "target_arch_env_var": attr.string(mandatory = True),
         "local_source_dirs": attr.string_list(mandatory = False),
         "repository_symlinks": attr.label_keyed_string_dict(mandatory = False),
+        "patch_versions": attr.string_list(),
+        "patch_files": attr.label_list(),
         "xz_tool": attr.label(
             default = Label("@xz//:bin/xz"),
             allow_single_file = True,
@@ -485,9 +509,13 @@ def redist_init_repository(
         use_tar_file_env_var,
         target_arch_env_var,
         local_source_dirs,
-        repository_symlinks = {}):
+        repository_symlinks = {},
+        patch_versions = None,
+        patch_files = None):
     # buildifier: disable=function-docstring-args
     """Initializes repository for individual NVIDIA redistribution."""
+    if patch_files:
+        print("redist_init_repository: patch_files = ", patch_files)
     _redist_repo(
         name = name,
         url_dict = url_dict,
@@ -502,6 +530,8 @@ def redist_init_repository(
         target_arch_env_var = target_arch_env_var,
         local_source_dirs = local_source_dirs,
         repository_symlinks = repository_symlinks,
+        patch_versions = patch_versions,
+        patch_files = patch_files,
     )
 
 def get_redistribution_urls(dist_info):
@@ -558,6 +588,23 @@ def get_version_and_template_lists(version_to_template):
         version_list.append(",".join(versions))
         template_list.append(Label(template))
     return (version_list, template_list)
+
+def get_version_and_patch_lists(version_to_patch):
+    # buildifier: disable=function-docstring-return
+    # buildifier: disable=function-docstring-args
+    """Returns lists of versions and patches provided in the dict."""
+    patch_to_version_map = {}
+    for version, patch in version_to_patch.items():
+        if patch not in patch_to_version_map.keys():
+            patch_to_version_map[patch] = [version]
+        else:
+            patch_to_version_map[patch].append(version)
+    version_list = []
+    patch_list = []
+    for patch, versions in patch_to_version_map.items():
+        version_list.append(",".join(versions))
+        patch_list.append(Label(patch))
+    return (version_list, patch_list)
 
 def get_local_templates(local_repo_data, templates):
     if "version_to_template" in local_repo_data:
