@@ -681,15 +681,15 @@ REDIST_VERSIONS_TO_BUILD_TEMPLATES = {
         },
     },
     "cuda_culibos": {
-            "repo_name": "cuda_culibos",
-            "version_to_template": {
-                # only exists on 13+
-                "13": "//gpu/cuda/build_templates:cuda_culibos.BUILD.tpl",
-            },
-	    "local": {
-		    "source_dirs": ["include", "lib"],
-	    },
+        "repo_name": "cuda_culibos",
+        "version_to_template": {
+            # only exists on 13+
+            "13": "//gpu/cuda/build_templates:cuda_culibos.BUILD.tpl",
         },
+        "local": {
+            "source_dirs": ["include", "lib"],
+        },
+    },
     "libcufft": {
         "repo_name": "cuda_cufft",
         "version_to_template": {
@@ -769,7 +769,6 @@ REDIST_VERSIONS_TO_BUILD_TEMPLATES = {
         "version_to_template": {
             "any": "//gpu/cuda/build_templates:cuda_cccl.BUILD.tpl",
         },
-        "version_to_patch": { },
         "local": {
             "source_dirs": ["include", "lib"],
         },
@@ -849,14 +848,14 @@ REDIST_VERSIONS_TO_BUILD_TEMPLATES = {
         },
     },
     "libnvptxcompiler": {
-            "repo_name": "cuda_nvptxcompiler",
-            "version_to_template": {
-                "any": "//gpu/cuda/build_templates:cuda_nvptxcompiler.BUILD.tpl",
-            },
-            "local": {
-                "source_dirs": ["include", "lib"],
-            },
+        "repo_name": "cuda_nvptxcompiler",
+        "version_to_template": {
+            "any": "//gpu/cuda/build_templates:cuda_nvptxcompiler.BUILD.tpl",
         },
+        "local": {
+            "source_dirs": ["include", "lib"],
+        },
+    },
 }
 
 NVSHMEM_REDIST_VERSIONS_TO_BUILD_TEMPLATES = {

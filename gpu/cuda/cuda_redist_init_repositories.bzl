@@ -18,8 +18,8 @@ load(
     "//gpu:nvidia_common_rules.bzl",
     "get_local_templates",
     "get_redistribution_urls",
-    "get_version_and_template_lists",
     "get_version_and_patch_lists",
+    "get_version_and_template_lists",
     "redist_init_repository",
 )
 load(
@@ -93,7 +93,7 @@ def cuda_redist_init_repositories(
         )
         patch_versions = None
         patch_files = None
-        if redist_name in ["cuda_cccl"]:
+        if redist_name in ["cuda_cccl"] and "version_to_patch" in repo_data:
             patch_versions, patch_files = get_version_and_patch_lists(
                 repo_data["version_to_patch"],
             )
