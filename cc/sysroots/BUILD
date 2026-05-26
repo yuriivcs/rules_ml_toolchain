@@ -46,3 +46,15 @@ collect_cc_libraries(
     ],
     visibility = ["//visibility:public"],
 )
+
+alias(
+    name = "libc_import",
+    actual = select({
+        "@bazel_tools//src/conditions:linux_x86_64": "@sysroot_linux_x86_64//:libc_import",
+        "@bazel_tools//src/conditions:linux_aarch64": "@sysroot_linux_aarch64//:libc_import",
+        "//conditions:default": ":empty",
+    }),
+    visibility = ["//visibility:public"],
+)
+
+

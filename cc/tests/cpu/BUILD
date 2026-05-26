@@ -37,6 +37,9 @@ cc_binary(
 cc_binary(
     name = "hello_world",
     srcs = ["hello_world.cc"],
+    deps = [
+        "@rules_ml_toolchain//cc/sysroots:libc_import",
+    ],
 )
 
 cc_test(

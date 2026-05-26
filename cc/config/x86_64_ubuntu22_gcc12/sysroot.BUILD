@@ -167,6 +167,12 @@ cc_toolchain_import(
     visibility = ["//visibility:public"],
 )
 
+cc_import(
+    name = "libc_import",
+    shared_library = "usr/lib/x86_64-linux-gnu/libc.so",
+    visibility = ["//visibility:public"],
+)
+
 # This is a group of GCC libraries
 cc_toolchain_import(
     name = "std_libs",

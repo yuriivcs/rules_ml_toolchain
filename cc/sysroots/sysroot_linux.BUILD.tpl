@@ -67,3 +67,9 @@ alias(
     actual = "@@%{sysroot_repo_name}//:openmp_copyright",
     visibility = ["//visibility:public"],
 )
+
+alias(
+    name = "libc_import",
+    actual = "@@%{sysroot_repo_name}//:libc_import",
+    visibility = ["//visibility:public"],
+)
