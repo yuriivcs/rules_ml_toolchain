@@ -69,7 +69,37 @@ alias(
 )
 
 alias(
-    name = "libc_import",
-    actual = "@@%{sysroot_repo_name}//:libc_import",
+    name = "libgcc_so",
+    actual = "@@%{sysroot_repo_name}//:libgcc_so",
+    visibility = ["//visibility:public"],
+)
+
+alias(
+    name = "libstdcxx_so",
+    actual = "@@%{sysroot_repo_name}//:libstdcxx_so",
+    visibility = ["//visibility:public"],
+)
+
+alias(
+    name = "libdl_so",
+    actual = "@@%{sysroot_repo_name}//:libdl_so",
+    visibility = ["//visibility:public"],
+)
+
+alias(
+    name = "libm_so",
+    actual = "@@%{sysroot_repo_name}//:libm_so",
+    visibility = ["//visibility:public"],
+)
+
+alias(
+    name = "libpthread_so",
+    actual = "@@%{sysroot_repo_name}//:libpthread_so",
+    visibility = ["//visibility:public"],
+)
+
+alias(
+    name = "libc_so",
+    actual = "@@%{sysroot_repo_name}//:libc_so",
     visibility = ["//visibility:public"],
 )

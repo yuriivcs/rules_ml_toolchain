@@ -48,13 +48,61 @@ collect_cc_libraries(
 )
 
 alias(
-    name = "libc_import",
+    name = "libgcc_so",
     actual = select({
-        "@bazel_tools//src/conditions:linux_x86_64": "@sysroot_linux_x86_64//:libc_import",
-        "@bazel_tools//src/conditions:linux_aarch64": "@sysroot_linux_aarch64//:libc_import",
+        "@bazel_tools//src/conditions:linux_x86_64": "@sysroot_linux_x86_64//:libgcc_so",
+        "@bazel_tools//src/conditions:linux_aarch64": "@sysroot_linux_aarch64//:libgcc_so",
         "//conditions:default": ":empty",
     }),
     visibility = ["//visibility:public"],
 )
 
+alias(
+    name = "libstdcxx_so",
+    actual = select({
+        "@bazel_tools//src/conditions:linux_x86_64": "@sysroot_linux_x86_64//:libstdcxx_so",
+        "@bazel_tools//src/conditions:linux_aarch64": "@sysroot_linux_aarch64//:libstdcxx_so",
+        "//conditions:default": ":empty",
+    }),
+    visibility = ["//visibility:public"],
+)
 
+alias(
+    name = "libdl_so",
+    actual = select({
+        "@bazel_tools//src/conditions:linux_x86_64": "@sysroot_linux_x86_64//:libdl_so",
+        "@bazel_tools//src/conditions:linux_aarch64": "@sysroot_linux_aarch64//:libdl_so",
+        "//conditions:default": ":empty",
+    }),
+    visibility = ["//visibility:public"],
+)
+
+alias(
+    name = "libm_so",
+    actual = select({
+        "@bazel_tools//src/conditions:linux_x86_64": "@sysroot_linux_x86_64//:libm_so",
+        "@bazel_tools//src/conditions:linux_aarch64": "@sysroot_linux_aarch64//:libm_so",
+        "//conditions:default": ":empty",
+    }),
+    visibility = ["//visibility:public"],
+)
+
+alias(
+    name = "libpthread_so",
+    actual = select({
+        "@bazel_tools//src/conditions:linux_x86_64": "@sysroot_linux_x86_64//:libpthread_so",
+        "@bazel_tools//src/conditions:linux_aarch64": "@sysroot_linux_aarch64//:libpthread_so",
+        "//conditions:default": ":empty",
+    }),
+    visibility = ["//visibility:public"],
+)
+
+alias(
+    name = "libc_so",
+    actual = select({
+        "@bazel_tools//src/conditions:linux_x86_64": "@sysroot_linux_x86_64//:libc_so",
+        "@bazel_tools//src/conditions:linux_aarch64": "@sysroot_linux_aarch64//:libc_so",
+        "//conditions:default": ":empty",
+    }),
+    visibility = ["//visibility:public"],
+)
