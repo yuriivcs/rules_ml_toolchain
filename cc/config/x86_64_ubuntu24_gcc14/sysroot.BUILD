@@ -98,6 +98,12 @@ cc_toolchain_import(
     visibility = ["//visibility:public"],
 )
 
+cc_import(
+    name = "libgcc_so",
+    shared_library = "usr/lib/gcc/x86_64-linux-gnu/{gcc_version}/libgcc_s.so".format(gcc_version = GCC_VERSION),
+    visibility = ["//visibility:public"],
+)
+
 cc_toolchain_import(
     name = "libstdc++",
     additional_libs = [
@@ -106,6 +112,12 @@ cc_toolchain_import(
     ],
     shared_library = "usr/lib/gcc/x86_64-linux-gnu/{gcc_version}/libstdc++.so".format(gcc_version = GCC_VERSION),
     static_library = "usr/lib/gcc/x86_64-linux-gnu/{gcc_version}/libstdc++.a".format(gcc_version = GCC_VERSION),
+    visibility = ["//visibility:public"],
+)
+
+cc_import(
+    name = "libstdcxx_so",
+    shared_library = "usr/lib/gcc/x86_64-linux-gnu/{gcc_version}/libstdc++.so".format(gcc_version = GCC_VERSION),
     visibility = ["//visibility:public"],
 )
 
@@ -121,6 +133,12 @@ cc_toolchain_import(
     deps = [":libc"],
 )
 
+cc_import(
+    name = "libdl_so",
+    shared_library = "usr/lib/x86_64-linux-gnu/libdl.so",
+    visibility = ["//visibility:public"],
+)
+
 cc_toolchain_import(
     name = "libm",
     additional_libs = [
@@ -130,6 +148,12 @@ cc_toolchain_import(
         "usr/lib/x86_64-linux-gnu/libmvec.so",
         "usr/lib/x86_64-linux-gnu/libmvec.a",
     ],
+    shared_library = "usr/lib/x86_64-linux-gnu/libm.so",
+    visibility = ["//visibility:public"],
+)
+
+cc_import(
+    name = "libm_so",
     shared_library = "usr/lib/x86_64-linux-gnu/libm.so",
     visibility = ["//visibility:public"],
 )
@@ -145,6 +169,12 @@ cc_toolchain_import(
     deps = [
         ":libc",
     ],
+)
+
+cc_import(
+    name = "libpthread_so",
+    shared_library = "usr/lib/x86_64-linux-gnu/libpthread.so",
+    visibility = ["//visibility:public"],
 )
 
 cc_toolchain_import(
@@ -164,6 +194,12 @@ cc_toolchain_import(
     ],
     shared_library = "usr/lib/x86_64-linux-gnu/libc.so",
     static_library = "usr/lib/x86_64-linux-gnu/libc.a",
+    visibility = ["//visibility:public"],
+)
+
+cc_import(
+    name = "libc_so",
+    shared_library = "usr/lib/x86_64-linux-gnu/libc.so",
     visibility = ["//visibility:public"],
 )
 
