@@ -38,8 +38,8 @@ cc_binary(
     name = "hello_world",
     srcs = ["hello_world.cc"],
     deps = [
-        "@rules_ml_toolchain//cc/sysroots:libgcc_so",
-        "@rules_ml_toolchain//cc/sysroots:libstdcxx_so",
+        #"@rules_ml_toolchain//cc/sysroots:libgcc_so",
+        #"@rules_ml_toolchain//cc/sysroots:libstdcxx_so",
         "@rules_ml_toolchain//cc/sysroots:libdl_so",
         "@rules_ml_toolchain//cc/sysroots:libm_so",
         "@rules_ml_toolchain//cc/sysroots:libpthread_so",
