@@ -78,6 +78,16 @@ alias(
 )
 
 alias(
+    name = "ld_linux_so",
+    actual = select({
+        "@bazel_tools//src/conditions:linux_x86_64": "@sysroot_linux_x86_64//:ld_linux_so",
+        "@bazel_tools//src/conditions:linux_aarch64": "@sysroot_linux_aarch64//:ld_linux_so",
+        "//conditions:default": ":empty",
+    }),
+    visibility = ["//visibility:public"],
+)
+
+alias(
     name = "libm_so",
     actual = select({
         "@bazel_tools//src/conditions:linux_x86_64": "@sysroot_linux_x86_64//:libm_so",

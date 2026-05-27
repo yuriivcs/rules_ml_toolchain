@@ -54,6 +54,9 @@ RUN cp libomp.so.5 libomp-hermetic.so
 RUN patchelf --set-soname libomp-hermetic.so libomp-hermetic.so
 RUN cp /usr/share/doc/libomp-dev/copyright /usr/lib/x86_64-linux-gnu/libomp-copyright
 
+COPY libc.so.6 /lib/x86_64-linux-gnu/libc.so.6
+COPY libm.so /usr/lib/x86_64-linux-gnu/libm.so
+
 WORKDIR /root
 
 

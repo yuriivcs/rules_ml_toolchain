@@ -135,7 +135,13 @@ cc_toolchain_import(
 
 cc_import(
     name = "libdl_so",
-    shared_library = "usr/lib/x86_64-linux-gnu/libdl.so",
+    shared_library = "usr/lib/x86_64-linux-gnu/libdl.so.2",
+    visibility = ["//visibility:public"],
+)
+
+cc_import(
+    name = "ld_linux_so",
+    shared_library = "usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2",
     visibility = ["//visibility:public"],
 )
 
@@ -198,8 +204,23 @@ cc_toolchain_import(
 )
 
 cc_import(
+    name = "libc.so",
+    shared_library = "lib/x86_64-linux-gnu/libc.so.6",
+    visibility = ["//visibility:public"],
+)
+
+cc_import(
+    name = "libc_nonshared.a",
+    static_library = "usr/lib/x86_64-linux-gnu/libc_nonshared.a",
+    visibility = ["//visibility:public"],
+)
+
+cc_import(
     name = "libc_so",
-    shared_library = "usr/lib/x86_64-linux-gnu/libc.so",
+    deps = [
+        ":libc.so",
+        ":libc_nonshared.a",
+    ],
     visibility = ["//visibility:public"],
 )
 

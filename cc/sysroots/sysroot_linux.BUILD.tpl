@@ -87,6 +87,12 @@ alias(
 )
 
 alias(
+    name = "ld_linux_so",
+    actual = "@@%{sysroot_repo_name}//:ld_linux_so",
+    visibility = ["//visibility:public"],
+)
+
+alias(
     name = "libm_so",
     actual = "@@%{sysroot_repo_name}//:libm_so",
     visibility = ["//visibility:public"],
