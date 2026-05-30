@@ -25,8 +25,8 @@ load(
     "ACTION_NAMES",
     "ACTION_NAME_GROUPS",
     "ALL_CC_COMPILE_ACTION_NAMES",
-    "ALL_CPP_COMPILE_ACTION_NAMES",
     "ALL_CC_LINK_ACTION_NAMES",
+    "ALL_CPP_COMPILE_ACTION_NAMES",
     "CC_LINK_EXECUTABLE_ACTION_NAMES",
     "DYNAMIC_LIBRARY_LINK_ACTION_NAMES",
 )
@@ -40,6 +40,9 @@ load(
     "flag_set",
     _feature = "feature",
 )
+
+load("//cc/sysroots:sysroot_vars.bzl", "SysrootVarsInfo")
+
 load(
     "@rules_ml_toolchain//third_party/rules_cc_toolchain/features:cc_toolchain_import.bzl",
     "CcToolchainImportInfo",
@@ -373,8 +376,8 @@ def _sysroot_feature(ctx):
 
     flag_sets += [
         flag_set(
-            actions =   ALL_CC_LINK_ACTION_NAMES +
-                        ALL_CC_COMPILE_ACTION_NAMES,
+            actions = ALL_CC_LINK_ACTION_NAMES +
+                      ALL_CC_COMPILE_ACTION_NAMES,
             flag_groups = [
                 flag_group(
                     flags = [
@@ -385,6 +388,46 @@ def _sysroot_feature(ctx):
             ],
         ),
     ]
+
+    if ctx.attr.vars_import:
+        root_path = ctx.attr.vars_import[SysrootVarsInfo].sysroot_root_path
+
+        flags = depset([])
+        if ctx.attr.linker_import:
+            linker_info = ctx.attr.linker_import[CcToolchainImportInfo]
+            linker_list = linker_info.linking_context.additional_libs.to_list()
+            if linker_list:
+                flags = depset(["-Wl,-dynamic-linker," + root_path + "/" + linker_list[0].path]).to_list()
+
+        if ctx.attr.libs_import:
+            libs_info = ctx.attr.libs_import[CcToolchainImportInfo]
+            flags += depset([
+                "-Wl,-rpath," + root_path + "/" + file.dirname
+                for file in libs_info
+                    .linking_context.static_libraries.to_list()
+            ] + [
+                "-Wl,-rpath," + root_path + "/" + file.dirname
+                for file in libs_info
+                    .linking_context.dynamic_libraries.to_list()
+            ] + [
+                "-Wl,-rpath," + root_path + "/" + file.dirname
+                for file in libs_info
+                    .linking_context.additional_libs.to_list()
+            ]).to_list()
+
+        flag_sets += [
+            flag_set(
+                actions = [
+                    ACTION_NAMES.cpp_link_executable,
+                    ACTION_NAMES.cpp_link_dynamic_library,
+                ],
+                flag_groups = [
+                    flag_group(
+                        flags = flags
+                    ),
+                ],
+            ),
+        ]
 
     return _feature(
         name = ctx.label.name,
@@ -403,6 +446,18 @@ cc_toolchain_sysroot_feature = rule(
         "implies": attr.string_list(),
         "sysroot": attr.label(mandatory = True),
         "target": attr.string(mandatory = True),
+        "vars_import": attr.label(
+            mandatory = False,
+            providers = [SysrootVarsInfo],
+        ),
+        "libs_import": attr.label(
+            mandatory = False,
+            providers = [CcToolchainImportInfo],
+        ),
+        "linker_import": attr.label(
+            mandatory = False,
+            providers = [CcToolchainImportInfo]
+        ),
     },
     provides = [FeatureInfo],
 )

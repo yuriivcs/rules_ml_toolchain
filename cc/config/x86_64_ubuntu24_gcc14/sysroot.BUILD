@@ -110,15 +110,25 @@ cc_toolchain_import(
 )
 
 cc_toolchain_import(
-    name = "libdl",
+    name = "linker",
     additional_libs = [
         "lib64/ld-linux-x86-64.so.2",
         "lib/x86_64-linux-gnu/ld-linux-x86-64.so.2",
+    ],
+    visibility = ["//visibility:public"],
+)
+
+cc_toolchain_import(
+    name = "libdl",
+    additional_libs = [
         "usr/lib/x86_64-linux-gnu/libdl.so.2",
     ],
     shared_library = "usr/lib/x86_64-linux-gnu/libdl.so",
     static_library = "usr/lib/x86_64-linux-gnu/libdl.a",
-    deps = [":libc"],
+    deps = [
+        ":linker",
+        ":libc"
+    ],
 )
 
 cc_toolchain_import(

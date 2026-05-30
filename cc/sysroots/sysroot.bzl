@@ -56,6 +56,7 @@ def _sysroot_impl(ctx):
         ctx.attr.build_file_tpl,
         {
             "%{sysroot_repo_name}": sysroot_label.repo_name,
+            "%{sysroot_root_path}": str(ctx.path("")).split("/external/")[0],
         },
     )
 
