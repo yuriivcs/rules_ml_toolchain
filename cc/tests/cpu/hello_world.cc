@@ -20,6 +20,7 @@ using namespace std;
 
 int main() {
   cout << "Hello C++ World!" << endl;
+  //force_dynamic_init();
   return 0;
 }
 

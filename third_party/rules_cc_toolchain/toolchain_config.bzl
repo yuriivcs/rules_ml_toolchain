@@ -530,6 +530,11 @@ def _cc_toolchain_config_impl(ctx):
     # Add system builtin include directories if specified
     builtin_include_dirs = ctx.attr.cxx_builtin_include_directories if ctx.attr.cxx_builtin_include_directories else []
 
+    runtime_lib_feature_obj = feature(
+        name = "runtime_library_search_directories",
+        enabled = True,
+    )
+
     return cc_common.create_cc_toolchain_config_info(
         ctx = ctx,
         host_system_name = "local",
@@ -556,7 +561,9 @@ def _cc_toolchain_config_impl(ctx):
             "ar": ctx.file.archiver,
             "strip": ctx.file.strip_tool,
             "in": ctx.file.install_name,
-        })] + _get_layering_features({}),
+        })] + [
+            runtime_lib_feature_obj,
+        ] + _get_layering_features({}),
     )
 
 cc_toolchain_config = rule(

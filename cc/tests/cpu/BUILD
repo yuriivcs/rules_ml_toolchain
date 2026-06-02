@@ -35,6 +35,17 @@ cc_binary(
 #############################################
 # C++
 cc_binary(
+    name = "force_dynamic_so",
+    srcs = ["empty_init.cc"], # Just an empty file like: void force_dynamic_init() {}
+    linkshared = True,
+)
+
+cc_import(
+    name = "force_dynamic_dep",
+    shared_library = ":force_dynamic_so",
+)
+
+cc_binary(
     name = "hello_world",
     srcs = ["hello_world.cc"],
 )

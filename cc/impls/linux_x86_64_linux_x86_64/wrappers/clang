@@ -18,5 +18,12 @@
 # allow passing the output of one command as input to the next
 set -o pipefail
 
+LOG_FILE="/tmp/bazel_clang_debug.log"
+
+echo "======================================================" >> $LOG_FILE
+echo "Script identity (\$0): $0" >> "$LOG_FILE"
+echo "First argument (\$1): $1" >> "$LOG_FILE"
+echo "All arguments (\$@): $@" >> "$LOG_FILE"
+
 # run specified tool with all arguments
 $GCC_PATH $@

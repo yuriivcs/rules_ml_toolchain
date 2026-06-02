@@ -38,6 +38,7 @@ load(
     "feature",
     "flag_group",
     "flag_set",
+    "with_feature_set",
     _feature = "feature",
 )
 
@@ -390,41 +391,53 @@ def _sysroot_feature(ctx):
     ]
 
     if ctx.attr.vars_import:
-        root_path = ctx.attr.vars_import[SysrootVarsInfo].sysroot_root_path
+        flag_groups_list = []
 
-        flags = depset([])
+        package_path = ctx.label.package
+        if package_path == "":
+            depth_prefix = "."
+        else:
+            folder_count = len(package_path.split("/"))
+            depth_prefix = "/".join([".."] * folder_count)
+
         if ctx.attr.linker_import:
             linker_info = ctx.attr.linker_import[CcToolchainImportInfo]
             linker_list = linker_info.linking_context.additional_libs.to_list()
             if linker_list:
-                flags = depset(["-Wl,-dynamic-linker," + root_path + "/" + linker_list[0].path]).to_list()
+                linker_flag_template = "-Wl,-dynamic-linker,\\$$ORIGIN/{origin_depth}/%s" % linker_list[0].path
+                flag_groups_list.append(
+                    flag_group(
+                        flags = [linker_flag_template],
+                    )
+                )
 
         if ctx.attr.libs_import:
             libs_info = ctx.attr.libs_import[CcToolchainImportInfo]
-            flags += depset([
-                "-Wl,-rpath," + root_path + "/" + file.dirname
-                for file in libs_info
-                    .linking_context.static_libraries.to_list()
-            ] + [
-                "-Wl,-rpath," + root_path + "/" + file.dirname
-                for file in libs_info
-                    .linking_context.dynamic_libraries.to_list()
-            ] + [
-                "-Wl,-rpath," + root_path + "/" + file.dirname
-                for file in libs_info
-                    .linking_context.additional_libs.to_list()
-            ]).to_list()
+
+            all_files = (
+                libs_info.linking_context.static_libraries.to_list() +
+                libs_info.linking_context.dynamic_libraries.to_list() +
+                libs_info.linking_context.additional_libs.to_list()
+            )
+
+            unique_dirs = depset([f.dirname for f in all_files]).to_list()
+            for directory in unique_dirs:
+                flag_groups_list.append(
+                    flag_group(
+                        flags = ["-Wl,-rpath,\\$$ORIGIN/{origin_depth}/%s" % directory],
+                    )
+                )
 
         flag_sets += [
             flag_set(
                 actions = [
                     ACTION_NAMES.cpp_link_executable,
                     ACTION_NAMES.cpp_link_dynamic_library,
+                    ACTION_NAMES.cpp_link_nodeps_dynamic_library,
                 ],
-                flag_groups = [
-                    flag_group(
-                        flags = flags
-                    ),
+                flag_groups = flag_groups_list,
+                with_features = [
+                    with_feature_set(features = ["runtime_library_search_directories"])
                 ],
             ),
         ]
@@ -433,7 +446,12 @@ def _sysroot_feature(ctx):
         name = ctx.label.name,
         enabled = ctx.attr.enabled,
         provides = ctx.attr.provides,
-        implies = ["sysroot"] + [label.name for label in ctx.attr.implies],
+        implies = [
+            "sysroot",
+            "runtime_library_search_directories"
+        ] + [
+            label.name for label in ctx.attr.implies
+        ],
         flag_sets = flag_sets,
     )
 

@@ -1,0 +1,1 @@
+void force_dynamic_init() {}
