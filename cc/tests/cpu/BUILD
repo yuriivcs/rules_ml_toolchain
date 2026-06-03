@@ -52,9 +52,9 @@ cc_binary(
     ],
     linkopts = [
         "-Wl,--dynamic-linker=external/sysroot_linux_x86_64_glibc_2_39/lib64/ld-linux-x86-64.so.2",
-        "-Wl,-rpath,$$ORIGIN/../../../external/sysroot_linux_x86_64_glibc_2_39/lib64",
-        "-Wl,-rpath,$$ORIGIN/../../../external/sysroot_linux_x86_64_glibc_2_39/lib/x86_64-linux-gnu",
-        "-Wl,-rpath,$$ORIGIN/../../../external/sysroot_linux_x86_64_glibc_2_39/usr/lib/x86_64-linux-gnu",
+        "-Wl,-rpath,$$ORIGIN/../../../../../../external/sysroot_linux_x86_64_glibc_2_39/lib64",
+        "-Wl,-rpath,$$ORIGIN/../../../../../../external/sysroot_linux_x86_64_glibc_2_39/lib/x86_64-linux-gnu",
+        "-Wl,-rpath,$$ORIGIN/../../../../../../external/sysroot_linux_x86_64_glibc_2_39/usr/lib/x86_64-linux-gnu",
     ],
 )
 
