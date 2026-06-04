@@ -15,7 +15,7 @@
 
 load("@pybind11_bazel//:build_defs.bzl", "pybind_extension")
 load(
-    "@rules_cc//cc:defs.bzl",
+    "@rules_ml_toolchain//cc:defs.bzl",
     "cc_binary",
     "cc_import",
     "cc_library",
@@ -39,15 +39,6 @@ cc_binary(
 cc_binary(
     name = "hello_world",
     srcs = ["hello_world.cc"],
-    data = [
-        "@sysroot_linux_x86_64//:sys_libs",
-    ],
-    linkopts = [
-        "-Wl,--dynamic-linker=external/sysroot_linux_x86_64_glibc_2_39/lib64/ld-linux-x86-64.so.2",
-        "-Wl,-rpath,$$ORIGIN/hello_world.runfiles/sysroot_linux_x86_64_glibc_2_39/lib64",
-        "-Wl,-rpath,$$ORIGIN/hello_world.runfiles/sysroot_linux_x86_64_glibc_2_39/lib/x86_64-linux-gnu",
-        "-Wl,-rpath,$$ORIGIN/hello_world.runfiles/sysroot_linux_x86_64_glibc_2_39/usr/lib/x86_64-linux-gnu",
-    ],
 )
 
 cc_test(
