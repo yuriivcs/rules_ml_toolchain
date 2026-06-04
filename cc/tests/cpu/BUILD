@@ -34,27 +34,19 @@ cc_binary(
 
 #############################################
 # C++
+
+# Context where
 cc_binary(
     name = "hello_world",
     srcs = ["hello_world.cc"],
     data = [
-        #"@rules_ml_toolchain//cc/sysroots:libgcc_so",
-        #"@rules_ml_toolchain//cc/sysroots:libstdcxx_so",
-        #"@rules_ml_toolchain//cc/sysroots:libdl_so",
-        #"@rules_ml_toolchain//cc/sysroots:ld_linux_so",
-        #"@rules_ml_toolchain//cc/sysroots:libm_so",
-        #"@rules_ml_toolchain//cc/sysroots:libpthread_so",
-        #"@rules_ml_toolchain//cc/sysroots:libc_so",
-        "@llvm_linux_x86_64//:std_libs",
         "@sysroot_linux_x86_64//:sys_libs",
-        "@sysroot_linux_x86_64//:openmp",
-        "@llvm_linux_x86_64//:libclang_rt",
     ],
     linkopts = [
         "-Wl,--dynamic-linker=external/sysroot_linux_x86_64_glibc_2_39/lib64/ld-linux-x86-64.so.2",
-        "-Wl,-rpath,$$ORIGIN/../../../../../../external/sysroot_linux_x86_64_glibc_2_39/lib64",
-        "-Wl,-rpath,$$ORIGIN/../../../../../../external/sysroot_linux_x86_64_glibc_2_39/lib/x86_64-linux-gnu",
-        "-Wl,-rpath,$$ORIGIN/../../../../../../external/sysroot_linux_x86_64_glibc_2_39/usr/lib/x86_64-linux-gnu",
+        "-Wl,-rpath,$$ORIGIN/hello_world.runfiles/sysroot_linux_x86_64_glibc_2_39/lib64",
+        "-Wl,-rpath,$$ORIGIN/hello_world.runfiles/sysroot_linux_x86_64_glibc_2_39/lib/x86_64-linux-gnu",
+        "-Wl,-rpath,$$ORIGIN/hello_world.runfiles/sysroot_linux_x86_64_glibc_2_39/usr/lib/x86_64-linux-gnu",
     ],
 )
 
