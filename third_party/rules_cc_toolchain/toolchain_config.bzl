@@ -193,7 +193,10 @@ def _get_runtime_library_search_directories_flags():
             ),
         ],
         with_features = [
-            with_feature_set(features = ["static_link_cpp_runtimes"]),
+            with_feature_set(
+                features = ["static_link_cpp_runtimes"],
+                not_features = ["no_solib_rpaths"],
+            ),
         ],
     ),
     flag_set(
@@ -213,7 +216,7 @@ def _get_runtime_library_search_directories_flags():
         ],
         with_features = [
             with_feature_set(
-                not_features = ["static_link_cpp_runtimes"],
+                not_features = ["static_link_cpp_runtimes", "no_solib_rpaths"],
             ),
         ],
     )]
