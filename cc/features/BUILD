@@ -229,3 +229,12 @@ cc_feature(
     enabled = True,
 )
 
+cc_feature(
+    name = "dynamic_link_cpp_runtimes",
+    enabled = True,
+)
+
+cc_feature(
+    name = "static_link_cpp_runtimes",
+    enabled = True,
+)

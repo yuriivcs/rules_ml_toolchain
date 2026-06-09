@@ -48,6 +48,11 @@ cc_import(
 cc_binary(
     name = "hello_world",
     srcs = ["hello_world.cc"],
+#    linkopts = [
+#        "-Wl,-rpath=$ORIGIN/hello_world.runfiles/llvm18_linux_x86_64/lib/x86_64-unknown-linux-gnu"
+#    ],
+    linkstatic = False,
+    features = ["dynamic_link_cpp_runtimes"],
 )
 
 cc_test(

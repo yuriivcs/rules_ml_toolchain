@@ -143,3 +143,15 @@ alias(
     actual = "@@%{llvm_repo_name}//:cuda_wrappers_headers",
     visibility = ["//visibility:public"],
 )
+
+alias(
+    name = "dynamic_runtime_libs",
+    actual = "@@%{llvm_repo_name}//:dynamic_runtime_libs",
+    visibility = ["//visibility:public"],
+)
+
+alias(
+    name = "static_runtime_libs",
+    actual = "@@%{llvm_repo_name}//:static_runtime_libs",
+    visibility = ["//visibility:public"],
+)

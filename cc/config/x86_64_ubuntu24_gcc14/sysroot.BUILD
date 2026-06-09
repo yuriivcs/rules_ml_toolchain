@@ -13,8 +13,6 @@
 # limitations under the License.
 # ==============================================================================
 
-load("@rules_cc//cc:defs.bzl", "cc_import")
-
 load(
     "@rules_ml_toolchain//third_party/rules_cc_toolchain:sysroot.bzl",
     "sysroot_package",
@@ -112,7 +110,15 @@ cc_toolchain_import(
 cc_toolchain_import(
     name = "linker",
     additional_libs = [
-        "lib64/ld-linux-x86-64.so.2",
+        #"lib64/ld-linux-x86-64.so.2",                      # TODO: Do we need it for successful linking?
+        "lib/x86_64-linux-gnu/ld-linux-x86-64.so.2",
+    ],
+    visibility = ["//visibility:public"],
+)
+
+filegroup(
+    name = "dynamic_runtime_libs",
+    srcs = [
         "lib/x86_64-linux-gnu/ld-linux-x86-64.so.2",
     ],
     visibility = ["//visibility:public"],
@@ -127,7 +133,20 @@ cc_toolchain_import(
     static_library = "usr/lib/x86_64-linux-gnu/libdl.a",
     deps = [
         ":linker",
-        ":libc"
+        ":libc",
+    ],
+)
+
+cc_toolchain_import(
+    name = "libdl_runtime",
+    additional_libs = [
+        "usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2",
+        "usr/lib/x86_64-linux-gnu/libdl.a",
+        "usr/lib/x86_64-linux-gnu/libdl.so.2",
+    ],
+    deps = [
+        ":linker",
+        ":libc",
     ],
 )
 
@@ -187,7 +206,7 @@ cc_toolchain_import(
     visibility = ["//visibility:public"],
 )
 
-# This is a group of system libraries
+# This is a group of system libraries for hermetic linking
 cc_toolchain_import(
     name = "sys_libs",
     deps = [
@@ -200,6 +219,31 @@ cc_toolchain_import(
     ],
     visibility = ["//visibility:public"],
 )
+
+# This is a group of system libraries for hermetic runtime (exclude symbolic links)
+cc_toolchain_import(
+    name = "sys_runtime_libs",
+    deps = [
+        ":libdl_runtime",
+        ":libc",
+        ":libpthread",
+        ":libm",
+        ":librt",
+    ],
+    visibility = ["//visibility:public"],
+)
+
+#filegroup(
+#    name = "sys_runtime_libs",
+#    srcs = glob([
+#            "usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2",
+#            "usr/lib/x86_64-linux-gnu/libdl.a",
+#            "usr/lib/x86_64-linux-gnu/libdl.so.2",
+#        ],
+#        #exclude = ["lib64/**"],
+#    ),
+#    visibility = ["//visibility:public"],
+#)
 
 #============================================================================================
 # Extra libraries

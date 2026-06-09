@@ -183,6 +183,26 @@ cc_toolchain_import(
     visibility = ["//visibility:public"],
 )
 
+filegroup(
+    name = "dynamic_runtime_libs",
+    srcs = [
+        "lib/x86_64-unknown-linux-gnu/libc++.so",
+        "lib/x86_64-unknown-linux-gnu/libc++abi.so",
+        "lib/x86_64-unknown-linux-gnu/libunwind.so",
+    ],
+    visibility = ["//visibility:public"],
+)
+
+filegroup(
+    name = "static_runtime_libs",
+    srcs = [
+        "lib/x86_64-unknown-linux-gnu/libc++.a",
+        "lib/x86_64-unknown-linux-gnu/libc++abi.a",
+        "lib/x86_64-unknown-linux-gnu/libunwind.a",
+    ],
+    visibility = ["//visibility:public"],
+)
+
 #============================================================================================
 # Sanitizers
 
