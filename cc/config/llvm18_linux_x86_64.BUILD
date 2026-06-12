@@ -142,6 +142,7 @@ cc_toolchain_import(
     name = "libc++",
     additional_libs = [
         "lib/x86_64-unknown-linux-gnu/libc++.so.1.0",
+        "lib/x86_64-unknown-linux-gnu/libc++.so.1",
         "lib/x86_64-unknown-linux-gnu/libc++.a",
     ],
     shared_library = "lib/x86_64-unknown-linux-gnu/libc++.so",
@@ -183,19 +184,19 @@ cc_toolchain_import(
     visibility = ["//visibility:public"],
 )
 
-filegroup(
-    name = "dynamic_runtime_libs",
-    srcs = [
-        "lib/x86_64-unknown-linux-gnu/libc++.so",
-        "lib/x86_64-unknown-linux-gnu/libc++abi.so",
-        "lib/x86_64-unknown-linux-gnu/libunwind.so",
+cc_toolchain_import(
+    name = "cxx_dynamic_runtime_libs",
+    additional_libs = [
+        "lib/x86_64-unknown-linux-gnu/libc++.so.1",
+        "lib/x86_64-unknown-linux-gnu/libc++abi.so.1",
+        "lib/x86_64-unknown-linux-gnu/libunwind.so.1",
     ],
     visibility = ["//visibility:public"],
 )
 
-filegroup(
-    name = "static_runtime_libs",
-    srcs = [
+cc_toolchain_import(
+    name = "cxx_static_libs",
+    additional_libs = [
         "lib/x86_64-unknown-linux-gnu/libc++.a",
         "lib/x86_64-unknown-linux-gnu/libc++abi.a",
         "lib/x86_64-unknown-linux-gnu/libunwind.a",

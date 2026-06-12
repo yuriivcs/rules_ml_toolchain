@@ -18,12 +18,17 @@
 # allow passing the output of one command as input to the next
 set -o pipefail
 
-LOG_FILE="/tmp/bazel_clang_debug.log"
+PARAMS_FILE="${1#@}"
 
-echo "======================================================" >> $LOG_FILE
-echo "Script identity (\$0): $0" >> "$LOG_FILE"
-echo "First argument (\$1): $1" >> "$LOG_FILE"
-echo "All arguments (\$@): $@" >> "$LOG_FILE"
+LINKER_NAME=$(sed -n 's/^-l:\(ld-.*\.so.*\)/\1/p' "$PARAMS_FILE" | head -n 1)
+SOLIB_PATH=$(sed -n 's/^-Wl,-rpath,\$ORIGIN\/\([^/]*_solib[^/]*toolchain[^/]*\).*/\1/p' "$PARAMS_FILE" | head -n 1)
 
-# run specified tool with all arguments
-$GCC_PATH $@
+if [[ -n "$LINKER_NAME" && -n "$SOLIB_PATH" ]]; then
+  DYNAMIC_LINKER_PATH="${SOLIB_PATH}/${LINKER_NAME}"
+  echo "DYNAMIC_LINKER_PATH=$DYNAMIC_LINKER_PATH"
+
+  $GCC_PATH $@ -Wl,--dynamic-linker=$DYNAMIC_LINKER_PATH
+else
+  $GCC_PATH $@
+fi
+

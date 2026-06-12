@@ -18,6 +18,7 @@
 # ==============================================================================
 
 load("//cc/config:constants.bzl", "LIBCXX_FLAGS")
+load("//cc/features:features.bzl", "cc_toolchain_import_runtime_feature")
 load("//cc/layering_check:build_defs.bzl", "cc_toolchain_with_cppmap")
 load("//cc/sanitizers:features.bzl",
     "cc_toolchain_import_asan_feature",
@@ -91,6 +92,12 @@ cc_toolchain_import_feature(
         "//common:is_static_libcxx": LIBCXX_FLAGS,
         "//conditions:default": [],
     }),
+)
+
+cc_toolchain_import_runtime_feature(
+    name = "imports_runtime_feature",
+    enabled = True,
+    toolchain_import = "@sysroot_linux_x86_64//:sys_runtime_libs",
 )
 
 cc_toolchain_import(
@@ -190,6 +197,9 @@ filegroup(
 FEATURES_ESSENTIAL = [
     "//third_party/rules_cc_toolchain/features:hermetic_libraries",  # Hermetic libraries feature required before import
     ":imports_feature",
+    #":imports_runtime_feature",
+    #"//cc/features:dynamic_link_cpp_runtimes",
+    #"//cc/features:static2_link_cpp_runtimes",
 
     # Toolchain configuration
     "//third_party/rules_cc_toolchain/features:warnings",
@@ -197,8 +207,6 @@ FEATURES_ESSENTIAL = [
     "//third_party/rules_cc_toolchain/features:reproducible",
     "//third_party/rules_cc_toolchain/features:language",
     "//third_party/rules_cc_toolchain/features:use_lld",
-    "//cc/features:dynamic_link_cpp_runtimes",
-    "//cc/features:static_link_cpp_runtimes",
     "//cc/features:sysroot_linux_x86_64",
     ":startup_libs_feature",
     "//third_party/rules_cc_toolchain/features:coverage",
@@ -225,7 +233,7 @@ FEATURES_ESSENTIAL = [
 
     # Other flags
     "//cc/features:allow_shlib_undefined",
-    "//cc/features:supports_dynamic_linker",
+    #"//cc/features:supports_dynamic_linker",
     "//cc/features:supports_start_end_lib_feature",
 
     # Sanitizers
@@ -250,6 +258,22 @@ cc_toolchain_config(
     target_system_name = "local",
 )
 
+cc_toolchain_import(
+    name = "static_libs",
+    deps = [
+        "@sysroot_linux_x86_64//:sys_static_libs",
+        "@llvm_linux_x86_64//:cxx_static_libs",
+    ],
+)
+
+cc_toolchain_import(
+    name = "dynamic_runtime_lib",
+    deps = [
+        "@sysroot_linux_x86_64//:sys_dynamic_runtime_libs",
+        "@llvm_linux_x86_64//:cxx_dynamic_runtime_libs",
+    ],
+)
+
 cc_toolchain_with_cppmap(
     name = "toolchain",
     all_files = ":all",
@@ -259,8 +283,8 @@ cc_toolchain_with_cppmap(
     linker_files = ":linker",
     objcopy_files = ":objcopy",
     strip_files = ":strip",
-    dynamic_runtime_lib = "@llvm_linux_x86_64//:dynamic_runtime_libs",
-    static_runtime_lib = "@llvm_linux_x86_64//:static_runtime_libs",
+    dynamic_runtime_lib = ":dynamic_runtime_lib",
+    static_runtime_lib = ":static_libs",
     supports_param_files = 1,
     toolchain_config = ":config",
     toolchain_identifier = "toolchain_linux_x86_64_linux_x86_64_id",

@@ -236,10 +236,24 @@ cc_feature(
 
 cc_feature(
     name = "dynamic_link_cpp_runtimes",
+    linker_flags = [
+        "-lc++",
+        "-lc++abi",
+        "-lunwind"
+    ],
+    without_features = ["static2_link_cpp_runtimes"],
     enabled = True,
 )
 
 cc_feature(
-    name = "static_link_cpp_runtimes",
+    name = "static2_link_cpp_runtimes",
+    linker_flags = [
+        "-Wl,-Bstatic",
+        "-lc++",
+        "-lc++abi",
+        "-lunwind",
+        "-Wl,-Bdynamic",
+    ],
+    with_features = ["static2_link_cpp_runtimes"],
     enabled = True,
 )

@@ -51,12 +51,6 @@ alias(
     visibility = ["//visibility:public"],
 )
 
-alias(
-    name = "sys_runtime_libs",
-    actual = "@@%{sysroot_repo_name}//:sys_runtime_libs",
-    visibility = ["//visibility:public"],
-)
-
 # Libraries for export
 alias(
     name = "openmp",
@@ -83,8 +77,14 @@ alias(
 )
 
 alias(
-    name = "dynamic_runtime_libs",
-    actual = "@@%{sysroot_repo_name}//:dynamic_runtime_libs",
+    name = "sys_dynamic_runtime_libs",
+    actual = "@@%{sysroot_repo_name}//:sys_dynamic_runtime_libs",
+    visibility = ["//visibility:public"],
+)
+
+alias(
+    name = "sys_static_libs",
+    actual = "@@%{sysroot_repo_name}//:sys_static_libs",
     visibility = ["//visibility:public"],
 )
 

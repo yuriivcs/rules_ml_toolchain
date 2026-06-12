@@ -533,10 +533,92 @@ def _cc_toolchain_config_impl(ctx):
     # Add system builtin include directories if specified
     builtin_include_dirs = ctx.attr.cxx_builtin_include_directories if ctx.attr.cxx_builtin_include_directories else []
 
-    runtime_lib_feature_obj = feature(
+    runtime_lib_feature = feature(
         name = "runtime_library_search_directories",
         enabled = True,
     )
+
+    supports_dynamic_linker = feature(
+        name = "supports_dynamic_linker",
+        enabled = True,
+    )
+
+    # Disable default '-static_libgcc' flag
+    static_libgcc = feature(
+        name = "static_libgcc",
+        enabled = False,
+    )
+
+    dynamic_linking_mode = feature(name = "dynamic_linking_mode")
+    static_linking_mode = feature(name = "static_linking_mode")
+
+    dynamic_link_cpp_runtimes = feature(
+        name = "dynamic_link_cpp_runtimes",
+        enabled = True,
+    )
+
+    static_link_cpp_runtimes = feature(
+        name = "static_link_cpp_runtimes",
+        enabled = True,
+        flag_sets = [
+            flag_set(
+                actions = [
+                    ACTION_NAMES.cpp_link_executable,
+                ],
+                with_features = [
+                    with_feature_set(not_features = ["dynamic_linking_mode"])
+                ],
+            ),
+            flag_set(
+                actions = [
+                    ACTION_NAMES.cpp_link_executable,
+                    ACTION_NAMES.cpp_link_dynamic_library,
+                ],
+                with_features = [
+                    with_feature_set(features = ["dynamic_linking_mode"])
+                ],
+                flag_groups = [
+                    #flag_group(flags = ["-shared-libgcc"]),
+                    flag_group(
+                        iterate_over = "runtime_library_search_directories",
+                        flag_groups = [
+                            flag_group(
+                                flags = ["-Wl,-rpath,$ORIGIN/%{runtime_library_search_directories}"],
+                            ),
+                        ],
+                        expand_if_available = "runtime_library_search_directories",
+                    ),
+                ],
+            ),
+        ],
+    )
+
+#    dynamic_runtime_feature = feature(
+#        name = "dynamic_link_cpp_runtimes",
+#        flag_sets = [
+#            flag_set(
+#                actions = [
+#                    ACTION_NAMES.cpp_link_executable,
+#                    ACTION_NAMES.cpp_link_dynamic_library,
+#                ],
+#                with_features = [with_feature_set(not_features = ["my_static_link_cpp_runtimes"])],
+#                flag_groups = [
+#                    flag_group(flags = ["-shared-libgcc"]),
+#                    flag_group(
+#                        iterate_over = "runtime_library_search_directories",
+#                        flag_groups = [
+#                            flag_group(
+#                                # Prefix the Bazel directory with $ORIGIN or $EXEC_ORIGIN
+#                                flags = ["-Wl,-rpath,$ORIGIN/%{runtime_library_search_directories}"],
+#                            ),
+#                        ],
+#                        expand_if_available = "runtime_library_search_directories",
+#                    ),
+#                ],
+#            ),
+#        ],
+#        enabled = True,
+#    )
 
     return cc_common.create_cc_toolchain_config_info(
         ctx = ctx,
@@ -565,8 +647,15 @@ def _cc_toolchain_config_impl(ctx):
             "strip": ctx.file.strip_tool,
             "in": ctx.file.install_name,
         })] + [
-            runtime_lib_feature_obj,
-        ] + _get_layering_features({}),
+            supports_dynamic_linker,
+            runtime_lib_feature,
+            static_libgcc,
+            dynamic_linking_mode,
+            static_linking_mode,
+            dynamic_link_cpp_runtimes,
+            static_link_cpp_runtimes,
+            #link_cpp_runtimes,
+        ] + _get_layering_features({})
     )
 
 cc_toolchain_config = rule(

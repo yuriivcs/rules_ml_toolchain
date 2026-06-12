@@ -145,13 +145,13 @@ alias(
 )
 
 alias(
-    name = "dynamic_runtime_libs",
-    actual = "@@%{llvm_repo_name}//:dynamic_runtime_libs",
+    name = "cxx_dynamic_runtime_libs",
+    actual = "@@%{llvm_repo_name}//:cxx_dynamic_runtime_libs",
     visibility = ["//visibility:public"],
 )
 
 alias(
-    name = "static_runtime_libs",
-    actual = "@@%{llvm_repo_name}//:static_runtime_libs",
+    name = "cxx_static_libs",
+    actual = "@@%{llvm_repo_name}//:cxx_static_libs",
     visibility = ["//visibility:public"],
 )

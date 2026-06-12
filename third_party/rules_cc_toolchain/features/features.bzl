@@ -85,6 +85,12 @@ def _cc_feature_impl(ctx):
                     expand_if_not_available = ctx.attr.expand_if_not_available if ctx.attr.expand_if_not_available else None,
                 ),
             ],
+            with_features = [
+                with_feature_set(
+                    features = ctx.attr.with_features if ctx.attr.with_features else [],
+                    not_features = ctx.attr.without_features if ctx.attr.without_features else [],
+                )
+            ] if ctx.attr.with_features or ctx.attr.without_features else [],
         ))
     if ctx.attr.c_flags:
         flag_sets.append(flag_set(
@@ -98,6 +104,12 @@ def _cc_feature_impl(ctx):
                     expand_if_not_available = ctx.attr.expand_if_not_available if ctx.attr.expand_if_not_available else None,
                 ),
             ],
+            with_features = [
+                with_feature_set(
+                    features = ctx.attr.with_features if ctx.attr.with_features else [],
+                    not_features = ctx.attr.without_features if ctx.attr.without_features else [],
+                )
+            ] if ctx.attr.with_features or ctx.attr.without_features else [],
         ))
     if ctx.attr.compiler_flags:
         flag_sets.append(flag_set(
@@ -109,6 +121,12 @@ def _cc_feature_impl(ctx):
                     expand_if_not_available = ctx.attr.expand_if_not_available if ctx.attr.expand_if_not_available else None,
                 ),
             ],
+            with_features = [
+                with_feature_set(
+                    features = ctx.attr.with_features if ctx.attr.with_features else [],
+                    not_features = ctx.attr.without_features if ctx.attr.without_features else [],
+                )
+            ] if ctx.attr.with_features or ctx.attr.without_features else [],
         ))
     if ctx.attr.linker_flags:
         flag_sets.append(flag_set(
@@ -120,6 +138,12 @@ def _cc_feature_impl(ctx):
                     expand_if_not_available = ctx.attr.expand_if_not_available if ctx.attr.expand_if_not_available else None,
                 ),
             ],
+            with_features = [
+                with_feature_set(
+                    features = ctx.attr.with_features if ctx.attr.with_features else [],
+                    not_features = ctx.attr.without_features if ctx.attr.without_features else [],
+                )
+            ] if ctx.attr.with_features or ctx.attr.without_features else [],
         ))
 
     if len(ctx.attr.env_sets.items()) > 0:
@@ -187,6 +211,14 @@ the target is a C or C++ library.",
         "expand_if_not_available": attr.string(
             doc = "A build variable that needs to be not available \
                             in order to expand the flag_group.",
+        ),
+        "with_features": attr.string_list(
+            doc = "A list of features that needs to be available \
+                               in order to expand the flag_group.",
+        ),
+        "without_features": attr.string_list(
+            doc = "A list of features that needs to be not available \
+                               in order to expand the flag_group.",
         ),
     },
     provides = [FeatureInfo],

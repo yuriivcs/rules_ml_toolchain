@@ -110,15 +110,7 @@ cc_toolchain_import(
 cc_toolchain_import(
     name = "linker",
     additional_libs = [
-        #"lib64/ld-linux-x86-64.so.2",                      # TODO: Do we need it for successful linking?
-        "lib/x86_64-linux-gnu/ld-linux-x86-64.so.2",
-    ],
-    visibility = ["//visibility:public"],
-)
-
-filegroup(
-    name = "dynamic_runtime_libs",
-    srcs = [
+        "lib64/ld-linux-x86-64.so.2",                      # TODO: Do we need it for successful linking?
         "lib/x86_64-linux-gnu/ld-linux-x86-64.so.2",
     ],
     visibility = ["//visibility:public"],
@@ -131,19 +123,6 @@ cc_toolchain_import(
     ],
     shared_library = "usr/lib/x86_64-linux-gnu/libdl.so",
     static_library = "usr/lib/x86_64-linux-gnu/libdl.a",
-    deps = [
-        ":linker",
-        ":libc",
-    ],
-)
-
-cc_toolchain_import(
-    name = "libdl_runtime",
-    additional_libs = [
-        "usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2",
-        "usr/lib/x86_64-linux-gnu/libdl.a",
-        "usr/lib/x86_64-linux-gnu/libdl.so.2",
-    ],
     deps = [
         ":linker",
         ":libc",
@@ -222,28 +201,34 @@ cc_toolchain_import(
 
 # This is a group of system libraries for hermetic runtime (exclude symbolic links)
 cc_toolchain_import(
-    name = "sys_runtime_libs",
-    deps = [
-        ":libdl_runtime",
-        ":libc",
-        ":libpthread",
-        ":libm",
-        ":librt",
+    name = "sys_static_libs",
+    additional_libs = [
+        #"lib/x86_64-linux-gnu/ld-linux-x86-64.so.2",
+        "usr/lib/x86_64-linux-gnu/libdl.a",
+        "usr/lib/x86_64-linux-gnu/libpthread.a",
+        "usr/lib/x86_64-linux-gnu/libc.a",
+        "usr/lib/x86_64-linux-gnu/libc_nonshared.a",
+        "usr/lib/x86_64-linux-gnu/libm.a",
+        "usr/lib/x86_64-linux-gnu/libmvec.a",
     ],
     visibility = ["//visibility:public"],
 )
 
-#filegroup(
-#    name = "sys_runtime_libs",
-#    srcs = glob([
-#            "usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2",
-#            "usr/lib/x86_64-linux-gnu/libdl.a",
-#            "usr/lib/x86_64-linux-gnu/libdl.so.2",
-#        ],
-#        #exclude = ["lib64/**"],
-#    ),
-#    visibility = ["//visibility:public"],
-#)
+cc_toolchain_import(
+    name = "sys_dynamic_runtime_libs",
+    additional_libs = [
+        "lib/x86_64-linux-gnu/ld-linux-x86-64.so.2",
+        "usr/lib/x86_64-linux-gnu/libdl.so.2",
+        "usr/lib/x86_64-linux-gnu/libpthread.so.0",
+        "lib/x86_64-linux-gnu/libc.so.6",
+        "lib/x86_64-linux-gnu/libm.so.6",
+        "lib/x86_64-linux-gnu/libmvec.so.1",
+        "usr/lib/x86_64-linux-gnu/librt.so.1",
+    ],
+    visibility = ["//visibility:public"],
+)
+
+
 
 #============================================================================================
 # Extra libraries

@@ -140,10 +140,10 @@ cc_feature(
         ":is_static_libstdcxx": True,
         "//conditions:default": False,
     }),
-    linker_flags = [
-        "-static-libstdc++",
-        "-static-libgcc",
-    ],
+#    linker_flags = [
+#        "-static-libstdc++",
+#        "-static-libgcc",
+#    ],
 )
 
 cc_toolchain_import_feature(
