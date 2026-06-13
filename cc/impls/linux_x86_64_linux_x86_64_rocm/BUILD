@@ -244,6 +244,7 @@ FEATURES_ESSENTIAL = [
     "//cc/rocm/features:rocm_defines",
     "//cc/rocm/features:rocm_hermetic",
     "//cc/rocm/features:rocm_warnings",
+    "//cc/rocm/features:rocm_compiler_rt",
 
     # Toolchain configuration
     "//third_party/rules_cc_toolchain/features:warnings",
