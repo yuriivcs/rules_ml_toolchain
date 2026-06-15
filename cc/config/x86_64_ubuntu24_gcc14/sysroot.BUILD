@@ -191,6 +191,18 @@ cc_toolchain_import(
     visibility = ["//visibility:public"],
 )
 
+filegroup(
+    name = "all",
+    srcs = glob(["**/*"]),
+    visibility = ["//visibility:public"],
+)
+
+cc_library(
+    name = "runfiles",
+    data = [":all"],
+    visibility = ["//visibility:public"],
+)
+
 #============================================================================================
 # Extra libraries
 #============================================================================================

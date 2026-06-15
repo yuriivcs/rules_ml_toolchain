@@ -22,6 +22,15 @@ config_setting(
 )
 
 alias(
+    name = "runfiles",
+    actual = select({
+        "//common:is_linux_x86_64": "@sysroot_linux_x86_64//:runfiles",
+        "//common:is_linux_aarch64": "@sysroot_linux_aarch64//:runfiles",
+    }),
+    visibility = ["//visibility:public"],
+)
+
+alias(
     name = "openmp",
     actual = select({
         "//common:is_linux_x86_64": "@sysroot_linux_x86_64//:openmp_import",

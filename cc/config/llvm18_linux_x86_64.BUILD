@@ -183,6 +183,12 @@ cc_toolchain_import(
     visibility = ["//visibility:public"],
 )
 
+cc_library(
+    name = "std_runfiles",
+    data = [":std_libs"],
+    visibility = ["//visibility:public"],
+)
+
 #============================================================================================
 # Sanitizers
 

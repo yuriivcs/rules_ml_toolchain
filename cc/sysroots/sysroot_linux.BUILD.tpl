@@ -49,6 +49,12 @@ alias(
     visibility = ["//visibility:public"],
 )
 
+alias(
+    name = "runfiles",
+    actual = "@@%{sysroot_repo_name}//:runfiles",
+    visibility = ["//visibility:public"],
+)
+
 # Libraries for export
 alias(
     name = "openmp",
