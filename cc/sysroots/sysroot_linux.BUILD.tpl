@@ -13,6 +13,8 @@
 # limitations under the License.
 # ==============================================================================
 
+load("@rules_ml_toolchain//cc/sysroots:sysroot_vars.bzl", "sysroot_vars")
+
 alias(
     name = "sysroot",
     actual = "@@%{sysroot_repo_name}//:sysroot",
@@ -71,5 +73,17 @@ alias(
 alias(
     name = "openmp_copyright",
     actual = "@@%{sysroot_repo_name}//:openmp_copyright",
+    visibility = ["//visibility:public"],
+)
+
+alias(
+    name = "linker",
+    actual = "@@%{sysroot_repo_name}//:linker",
+    visibility = ["//visibility:public"],
+)
+
+sysroot_vars(
+    name = "vars",
+    sysroot_repo_name = "%{sysroot_repo_name}",
     visibility = ["//visibility:public"],
 )

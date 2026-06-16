@@ -86,6 +86,9 @@ cc_toolchain_sysroot_feature(
     name = "sysroot_linux_x86_64",
     enabled = True,
     sysroot = "@sysroot_linux_x86_64//:sysroot",
+    vars_import = "@sysroot_linux_x86_64//:vars",
+    libs_import = "@sysroot_linux_x86_64//:sys_libs",
+    linker_import = "@sysroot_linux_x86_64//:linker",
     target = "x86_64-linux-gnu",
 )
 
