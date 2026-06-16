@@ -204,11 +204,16 @@ cc_toolchain_import(
 cc_library(
     name = "runfiles",
     srcs = [
-        "usr/lib/x86_64-linux-gnu/librt.so.1",
-        "usr/lib/x86_64-linux-gnu/libpthread.so",
-        "usr/lib/x86_64-linux-gnu/libdl.so",
-        "usr/lib/x86_64-linux-gnu/libm.so",
-        "usr/lib/x86_64-linux-gnu/libc.so",
+        #"usr/lib/x86_64-linux-gnu/librt.so.1",
+        #"usr/lib/x86_64-linux-gnu/libpthread.so",
+        #"usr/lib/x86_64-linux-gnu/libdl.so",
+        #"usr/lib/x86_64-linux-gnu/libm.so",
+        #"usr/lib/x86_64-linux-gnu/libc.so",
+
+        "usr/lib/x86_64-linux-gnu/libpthread.so.0",
+        "usr/lib/x86_64-linux-gnu/libdl.so.2",
+        "lib/x86_64-linux-gnu/libm.so.6",
+        "lib/x86_64-linux-gnu/libc.so.6",
         "lib/x86_64-linux-gnu/ld-linux-x86-64.so.2",
     ],
     features = [
