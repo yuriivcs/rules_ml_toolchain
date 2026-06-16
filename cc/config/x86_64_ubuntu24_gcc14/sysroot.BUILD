@@ -201,15 +201,16 @@ cc_toolchain_import(
     visibility = ["//visibility:public"],
 )
 
-filegroup(
-    name = "all",
-    srcs = glob(["**/*"]),
-    visibility = ["//visibility:public"],
-)
-
 cc_library(
     name = "runfiles",
-    data = [":all"],
+    srcs = [
+        "usr/lib/x86_64-linux-gnu/librt.so.1",
+        "usr/lib/x86_64-linux-gnu/libpthread.so",
+        "usr/lib/x86_64-linux-gnu/libdl.so",
+        "usr/lib/x86_64-linux-gnu/libm.so",
+        "usr/lib/x86_64-linux-gnu/libc.so",
+        "lib/x86_64-linux-gnu/ld-linux-x86-64.so.2",
+    ],
     features = [
         "-module_maps",
         "-layering_check",

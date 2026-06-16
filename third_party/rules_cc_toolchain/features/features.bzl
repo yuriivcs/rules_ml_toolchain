@@ -390,66 +390,6 @@ def _sysroot_feature(ctx):
         ),
     ]
 
-    if ctx.attr.vars_import:
-        flag_groups_list = []
-
-        sysroot_repo_name = ctx.attr.vars_import[SysrootVarsInfo].sysroot_repo_name
-        print("$$$$$$$$$$$$$$$$$$$ sysroot_repo_name: " + sysroot_repo_name)
-
-        if ctx.attr.linker_import:
-            linker_info = ctx.attr.linker_import[CcToolchainImportInfo]
-            linker_list = linker_info.linking_context.additional_libs.to_list()
-            if linker_list:
-                #linker_flag_template = "-Wl,-dynamic-linker,%s" % linker_list[0].path
-                #print("$$$$$$$$$$$$$$$$$$$ linker_flag_template: " + linker_flag_template)
-                linker_flag_template = "-Wl,-dynamic-linker,cc/tests/cpu/hello_world.runfiles/sysroot_linux_x86_64_glibc_2_39/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2"
-                flag_groups_list.append(
-                    flag_group(
-                        flags = [linker_flag_template],
-                    )
-                )
-
-        if ctx.attr.libs_import:
-            libs_info = ctx.attr.libs_import[CcToolchainImportInfo]
-
-            all_files = (
-                libs_info.linking_context.static_libraries.to_list() +
-                libs_info.linking_context.dynamic_libraries.to_list() +
-                libs_info.linking_context.additional_libs.to_list()
-            )
-
-            unique_dirs = depset([f.dirname for f in all_files]).to_list()
-#            for directory in unique_dirs:
-#                print("$$$$$$$$$$$$$$$$$$$ rpath: " + ("-Wl,-rpath,\\$$ORIGIN/%s" % directory))
-#                flag_groups_list.append(
-#                    flag_group(
-#                        flags = ["-Wl,-rpath,\\$$ORIGIN//%s" % directory],
-#                    )
-#                )
-            flag_groups_list.append(
-                flag_group(
-                    flags = [
-                        "-Wl,-rpath,\\$$ORIGIN/hello_world.runfiles/sysroot_linux_x86_64_glibc_2_39/usr/lib/x86_64-linux-gnu",
-                        "-Wl,-rpath,\\$$ORIGIN/hello_world.runfiles/sysroot_linux_x86_64_glibc_2_39/lib/x86_64-linux-gnu",
-                        "-Wl,-rpath,\\$$ORIGIN/hello_world.runfiles/sysroot_linux_x86_64_glibc_2_39/lib64",
-                    ],
-                )
-            )
-
-        flag_sets += [
-            flag_set(
-                actions = [
-                    ACTION_NAMES.cpp_link_executable,
-                    ACTION_NAMES.cpp_link_dynamic_library,
-                    ACTION_NAMES.cpp_link_nodeps_dynamic_library,
-                ],
-                flag_groups = flag_groups_list,
-                with_features = [
-                    with_feature_set(features = ["runtime_library_search_directories"])
-                ],
-            ),
-        ]
-
     return _feature(
         name = ctx.label.name,
         enabled = ctx.attr.enabled,

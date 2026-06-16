@@ -14,12 +14,14 @@ Licensed under the Apache License, Version 2.0 (the "License");
 ============================================================================== */
 
 #include <iostream>
-#include <vector>
+#include <filesystem>
 
 using namespace std;
 
 int main() {
-  cout << "Hello C++ World!" << endl;
-  return 0;
+    cout << "Hello C++ World!" << endl;
+    cout << "Execution Directory: " << filesystem::current_path() << endl;
+
+    return 0;
 }
 
