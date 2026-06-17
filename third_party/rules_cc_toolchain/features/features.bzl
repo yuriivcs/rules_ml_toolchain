@@ -390,6 +390,37 @@ def _sysroot_feature(ctx):
         ),
     ]
 
+    if ctx.attr.vars_import:
+        flag_groups_list = []
+
+        sysroot_repo_name = ctx.attr.vars_import[SysrootVarsInfo].sysroot_repo_name
+        print("$$$$$$$$$$$$$$$$$$$ sysroot_repo_name: " + sysroot_repo_name)
+
+        if False: #ctx.attr.linker_import:
+            linker_info = ctx.attr.linker_import[CcToolchainImportInfo]
+            linker_list = linker_info.linking_context.additional_libs.to_list()
+            if linker_list:
+                linker_flag_template = "-Wl,-dynamic-linker,_solib_x86_64/_U_A_Asysroot_Ulinux_Ux86_U64_Uglibc_U2_U39_S_S_Crunfiles___Ulib_Sx86_U64-linux-gnu/ld-linux-x86-64.so.2"
+                flag_groups_list.append(
+                    flag_group(
+                        flags = [linker_flag_template],
+                    )
+                )
+
+        flag_sets += [
+            flag_set(
+                actions = [
+                    ACTION_NAMES.cpp_link_executable,
+                    ACTION_NAMES.cpp_link_dynamic_library,
+                    ACTION_NAMES.cpp_link_nodeps_dynamic_library,
+                ],
+                flag_groups = flag_groups_list,
+                with_features = [
+                    with_feature_set(features = ["runtime_library_search_directories"])
+                ],
+            ),
+        ]
+
     return _feature(
         name = ctx.label.name,
         enabled = ctx.attr.enabled,

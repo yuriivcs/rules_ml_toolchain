@@ -20,18 +20,26 @@ set -o pipefail
 
 PARAMS_FILE="${1#@}"
 
-LINKER_NAME=$(sed -n 's/^-l:\(ld-.*\.so.*\)/\1/p' "$PARAMS_FILE" | head -n 1)
-echo "LINKER_NAME=$LINKER_NAME"
+if [[ -n "$PARAMS_FILE" && "$PARAMS_FILE" == *.params ]]; then
+    ARGS=("$@")
 
-SOLIB_PATH=$(sed -n 's/^-Wl,-rpath,\$ORIGIN\/\([^/]*_solib[^/]*toolchain[^/]*\).*/\1/p' "$PARAMS_FILE" | head -n 1)
-echo "SOLIB_PATH=$SOLIB_PATH"
+    LOADER_FILE=$(sed -n 's/^-l:\(ld-.*\.so.*\)/\1/p' "$PARAMS_FILE" | head -n 1)
 
-if [[ -n "$LINKER_NAME" && -n "$SOLIB_PATH" ]]; then
-  DYNAMIC_LINKER_PATH="${SOLIB_PATH}/${LINKER_NAME}"
-  echo "DYNAMIC_LINKER_PATH=$DYNAMIC_LINKER_PATH"
+    if [[ -n "$LOADER_FILE" ]]; then
+        FULL_DIRS=$(sed -n 's/^-L\(.*_solib_[^[:space:]]*\)/\1/p' "$PARAMS_FILE" | sort -u)
 
-  $GCC_PATH $@ -Wl,--dynamic-linker=$DYNAMIC_LINKER_PATH
+        for FULL_DIR in $FULL_DIRS; do
+            if [[ -f "${FULL_DIR}/${LOADER_FILE}" ]]; then
+                REL_DIR=$(echo "$FULL_DIR" | sed -n 's|^.*bazel-out/[^/]*/bin/\(_solib_.*\)|\1|p')
+                LOADER_PATH="${REL_DIR}/${LOADER_FILE}"
+
+                ARGS+=("-Wl,--dynamic-linker=$LOADER_PATH")
+                echo "Successfully injected dynamic linker: $LOADER_PATH"
+                break
+            fi
+        done
+    fi
+    exec "$GCC_PATH" "${ARGS[@]}"
 else
-  $GCC_PATH $@
+    $GCC_PATH $@
 fi
-
