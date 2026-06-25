@@ -149,7 +149,7 @@ def cc_toolchain_deps():
     if "sysroot_darwin_aarch64" not in native.existing_rules():
         macos_local_sysroot(
             name = "sysroot_darwin_aarch64",
-            build_file = "//cc/config:sysroot_darwin_aarch64.BUILD",
+            build_file = "@rules_ml_toolchain//cc/config:sysroot_darwin_aarch64.BUILD",
         )
 
         #new_local_repository(
