@@ -19,10 +19,6 @@ load(
     "cc_toolchain_import_feature",
     "cc_toolchain_sysroot_feature",
 )
-load(
-    "//cc/features:runtime_library_search_directories.bzl",
-    "runtime_library_search_directories",
-)
 
 package(
     default_visibility = [
@@ -158,9 +154,6 @@ cc_feature(
 
 cc_feature(
     name = "no_solib_rpaths",
-    # Note: This feature must be explicitly requested by targets that want to strip solib rpaths.
-    # It's disabled by default to preserve normal Bazel behavior for most builds.
-    # Wheel builds should explicitly include this in their features list.
     enabled = False,
 )
 
@@ -236,12 +229,5 @@ cc_feature(
         "-stdlib=libc++",
     ],
     enabled = True,
-)
-
-# Runtime library search directories feature
-# This overrides the default action_config-embedded flag_sets to ensure
-# proper with_features support for no_solib_rpaths
-runtime_library_search_directories(
-    name = "runtime_library_search_directories",
 )
 

@@ -139,7 +139,7 @@ diff --git a/src/google/protobuf/arena.cc b/src/google/protobuf/arena.cc
    return *thread_cache_->Get();
  }
 -#elif defined(PROTOBUF_USE_DLLS) && defined(_WIN32)
-+#elif defined(_WIN32)
++#elif defined(_WIN32) || defined(__APPLE__)
  ThreadSafeArena::ThreadCache& ThreadSafeArena::thread_cache() {
    static PROTOBUF_THREAD_LOCAL ThreadCache thread_cache;
    return thread_cache;
@@ -195,7 +195,7 @@ diff --git a/src/google/protobuf/thread_safe_arena.h b/src/google/protobuf/threa
    // storage class we implemented.
    static ThreadCache& thread_cache();
 -#elif defined(PROTOBUF_USE_DLLS) && defined(_WIN32)
-+#elif defined(_WIN32)
++#elif defined(_WIN32) || defined(__APPLE__)
    // Thread local variables cannot be exposed through MSVC DLL interface but we
    // can wrap them in static functions.
    static ThreadCache& thread_cache();

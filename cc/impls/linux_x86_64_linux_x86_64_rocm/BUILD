@@ -20,7 +20,6 @@
 load("@config_rocm_hipcc//rocm:build_defs.bzl", "hipcc_config")
 load("@rules_cc//cc:defs.bzl", "cc_toolchain")
 load("//cc/config:constants.bzl", "LIBCXX_FLAGS", "LIBSTDCXX_FLAGS")
-load("//cc/features:runtime_library_search_directories.bzl", "runtime_library_search_directories_feature")
 load("//cc/rocm/features:rocm_hipcc_feature.bzl", "rocm_hipcc_feature")
 load("//third_party/rules_cc_toolchain:toolchain_config.bzl", "cc_toolchain_config")
 load("//third_party/rules_cc_toolchain/features:cc_toolchain_import.bzl", "cc_toolchain_import")
@@ -247,8 +246,6 @@ FEATURES_ESSENTIAL = [
     "//cc/rocm/features:rocm_hermetic",
     "//cc/rocm/features:rocm_warnings",
     "//cc/rocm/features:rocm_compiler_rt",
-    "//cc/features:no_solib_rpaths",
-    "//cc/features:runtime_library_search_directories",
 
     # Toolchain configuration
     "//third_party/rules_cc_toolchain/features:warnings",

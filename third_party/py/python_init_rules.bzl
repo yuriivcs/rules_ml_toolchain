@@ -37,6 +37,7 @@ def python_init_rules(extra_patches = []):
     tf_http_archive(
         name = "com_google_protobuf",
         patch_file = [
+            # TODO: try to separate __APPLE__ constraint only for cases when LLVM linker is used
             "@rules_ml_toolchain//third_party/protobuf:protobuf.patch",
             "@rules_ml_toolchain//third_party/protobuf:protobuf_arena.patch",
         ],

@@ -20,6 +20,7 @@ load("//common:tar_extraction_utils.bzl", "tool_archive")
 load("//common:repo.bzl", "tf_mirror_urls")
 load("//cc/llvms:llvm.bzl", "llvm")
 load("//cc/sysroots:sysroot.bzl", "sysroot")
+load("//cc/sysroots:macos_local_sysroot.bzl", "macos_local_sysroot")
 
 def cc_toolchain_deps():
     tool_archive(
@@ -146,11 +147,16 @@ def cc_toolchain_deps():
     # Darwin (macOS) aarch64 sysroot
     ################################################################
     if "sysroot_darwin_aarch64" not in native.existing_rules():
-        new_local_repository(
+        macos_local_sysroot(
             name = "sysroot_darwin_aarch64",
             build_file = "//cc/config:sysroot_darwin_aarch64.BUILD",
-            path = "cc/sysroots/darwin_aarch64/MacOSX.sdk",
         )
+
+        #new_local_repository(
+        #    name = "sysroot_darwin_aarch64",
+        #    build_file = "//cc/config:sysroot_darwin_aarch64.BUILD",
+        #    path = "cc/sysroots/darwin_aarch64/MacOSX.sdk",
+        #)
 
     ################################################################
     # Linux x86_64 LLVM
