@@ -35,10 +35,6 @@ cc_toolchain_import(
     includes = [
         "usr/include/c++/v1",
     ],
-    #target_compatible_with = select({
-    #    "@platforms//os:macos": ["@platforms//cpu:aarch64"],
-    #    "//conditions:default": ["@platforms//:incompatible"],
-    #}),
     visibility = ["//visibility:public"],
 )
 
@@ -58,10 +54,6 @@ cc_toolchain_import(
     frameworks = [
         "System/Library/Frameworks",
     ],
-    #target_compatible_with = select({
-    #    "@platforms//os:macos": ["@platforms//cpu:aarch64"],
-    #    "//conditions:default": ["@platforms//:incompatible"],
-    #}),
     visibility = ["//visibility:public"],
 )
 
@@ -73,30 +65,18 @@ cc_toolchain_import(
 cc_toolchain_import(
     name = "system",
     shared_library = "usr/lib/libSystem.tbd",
-    #target_compatible_with = select({
-    #    "@platforms//os:macos": ["@platforms//cpu:aarch64"],
-    #    "//conditions:default": ["@platforms//:incompatible"],
-    #}),
     visibility = ["//visibility:public"],
 )
 
 cc_toolchain_import(
     name = "libm",
     shared_library = "usr/lib/libm.tbd",
-    #target_compatible_with = select({
-    #    "@platforms//os:macos": ["@platforms//cpu:aarch64"],
-    #    "//conditions:default": ["@platforms//:incompatible"],
-    #}),
     visibility = ["//visibility:public"],
 )
 
 cc_toolchain_import(
     name = "libstdc++",
     shared_library = "usr/lib/libc++.tbd",
-    #target_compatible_with = select({
-    #    "@platforms//os:macos": ["@platforms//cpu:aarch64"],
-    #    "//conditions:default": ["@platforms//:incompatible"],
-    #}),
     visibility = ["//visibility:public"],
 )
 
@@ -110,10 +90,6 @@ cc_toolchain_import(
 cc_toolchain_import(
     name = "objc",
     shared_library = "usr/lib/libobjc.tbd",
-    #target_compatible_with = select({
-    #    "@platforms//os:macos": ["@platforms//cpu:aarch64"],
-    #    "//conditions:default": ["@platforms//:incompatible"],
-    #}),
 )
 
 cc_toolchain_import(
