@@ -65,10 +65,75 @@ ALL_ACTIONS = [
     ACTION_NAMES.clif_match,
 ]
 
+def _get_actions_empty_config(ctx):
+    action_configs = [action_config(
+        action_name = action,
+        enabled = True,
+        tools = [
+            tool(ctx.attr.tool_paths["strip"]),
+        ],
+        implies = [],
+    ) for action in [
+        ACTION_NAMES.strip,
+    ]]
+
+
+    action_configs += [action_config(
+        action_name = action,
+        enabled = True,
+        tools = [
+            tool(ctx.attr.tool_paths["gcc"]),
+        ],
+        implies = [],
+    ) for action in [
+        ACTION_NAMES.c_compile,
+        ACTION_NAMES.cpp_compile,
+    ]]
+
+    action_configs += [action_config(
+        action_name = action,
+        enabled = True,
+        tools = [
+            tool(ctx.attr.tool_paths["gcc"]),
+        ],
+        implies = [],
+    ) for action in [
+        ACTION_NAMES.cpp_link_dynamic_library,
+        ACTION_NAMES.cpp_link_nodeps_dynamic_library,
+        ACTION_NAMES.lto_index_for_dynamic_library,
+        ACTION_NAMES.lto_index_for_nodeps_dynamic_library
+    ]]
+
+    action_configs += [action_config(
+        action_name = action,
+        enabled = True,
+        tools = [
+            tool(ctx.attr.tool_paths["gcc"]),
+        ],
+        implies = [],
+    ) for action in [
+        ACTION_NAMES.cpp_link_executable,
+        ACTION_NAMES.lto_index_for_executable
+    ]]
+
+    action_configs += [action_config(
+        action_name = action,
+        enabled = True,
+        tools = [
+            tool(ctx.attr.tool_paths["gcc"]),
+        ],
+        implies = [],
+    ) for action in [
+        ACTION_NAMES.cpp_link_static_library,
+    ]]
+
+    return action_configs
+
 def _get_link_actions_config(ctx):
     tools = [
         tool(ctx.attr.tool_paths["gcc"]),
     ]
+
     action_configs = [action_config(
         action_name = action,
         enabled = True,
@@ -78,24 +143,29 @@ def _get_link_actions_config(ctx):
             _get_output_execpath_flag() +
             _get_runtime_library_search_directories_flags() +
             _get_library_search_directories_flags() +
-            #_get_asan_lib_flag() +
             _get_libraries_to_link_flags() +
             _get_strip_debug_symbols_flag()
-    ) for action in [ACTION_NAMES.cpp_link_dynamic_library, ACTION_NAMES.cpp_link_nodeps_dynamic_library,
-        ACTION_NAMES.lto_index_for_dynamic_library, ACTION_NAMES.lto_index_for_nodeps_dynamic_library]]
+    ) for action in [
+        ACTION_NAMES.cpp_link_dynamic_library,
+        ACTION_NAMES.cpp_link_nodeps_dynamic_library,
+        ACTION_NAMES.lto_index_for_dynamic_library,
+        ACTION_NAMES.lto_index_for_nodeps_dynamic_library
+    ]]
 
     action_configs += [action_config(
-             action_name = action,
-             enabled = True,
-             tools = tools,
-             implies = [],
-             flag_sets = _get_output_execpath_flag() +
-                _get_runtime_library_search_directories_flags() +
-                _get_library_search_directories_flags() +
-                #_get_asan_lib_flag() +
-                _get_libraries_to_link_flags() +
-                _get_strip_debug_symbols_flag()
-         ) for action in [ACTION_NAMES.cpp_link_executable, ACTION_NAMES.lto_index_for_executable]]
+        action_name = action,
+        enabled = True,
+        tools = tools,
+        implies = [],
+        flag_sets = _get_output_execpath_flag() +
+            _get_runtime_library_search_directories_flags() +
+            _get_library_search_directories_flags() +
+            _get_libraries_to_link_flags() +
+            _get_strip_debug_symbols_flag()
+    ) for action in [
+        ACTION_NAMES.cpp_link_executable,
+        ACTION_NAMES.lto_index_for_executable
+    ]]
 
     return action_configs
 
@@ -544,6 +614,7 @@ def _cc_toolchain_config_impl(ctx):
         compiler = "clang",
         abi_version = "unknown",
         abi_libc_version = "unknown",
+        #action_configs = _get_actions_empty_config(ctx),
         cxx_builtin_include_directories = builtin_include_dirs,
         tool_paths = [
             tool_path(name = name, path = path)

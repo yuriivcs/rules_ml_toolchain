@@ -46,9 +46,8 @@ build:clang --copt=-Qunused-arguments
 build:clang --copt=-Werror=mismatched-tags
 
 # Hermetic ASan configuration example. Hermetic ASan works only for Linux x86_64
-common:asan --features=asan
-common:asan --host_features=-asan
-common:asan --strip=never
+
+
 common:asan --copt=-fno-omit-frame-pointer
 # Disables LeakSanitizer (LSan). The core of AddressSanitizer (ASan) remains fully active and will still catch
 # the "loud" memory errors that actually cause crashes, security vulnerabilities, and undefined behavior

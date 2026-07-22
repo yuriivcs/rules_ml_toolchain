@@ -1,4 +1,4 @@
-# Copyright 2025 Google LLC
+# Copyright 2026 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ load("@bazel_tools//tools/build_defs/repo:local.bzl", "new_local_repository")
 
 # Linux -> Darwin
 #   Require valid path to available sysroot or print error otherwise
-def _macos_local_sysroot_impl(ctx):
+def _macos_sdk_local_impl(ctx):
     sdk_path = ctx.os.environ.get("MACOS_SYSROOT_PATH", "")
 
     if not sdk_path:
@@ -32,15 +32,15 @@ def _macos_local_sysroot_impl(ctx):
             fail("Failed to find macOS SDK via xcrun: " + res.stderr)
         sdk_path = res.stdout.strip()
 
-    print("macos_local_sysroot: sdk_path = " + sdk_path)
+    print("macos_sdk_local: sdk_path = " + sdk_path)
     links = ["System", "usr"]
     for link in links:
         ctx.symlink(sdk_path + "/" + link, link)
 
     ctx.symlink(ctx.path(ctx.attr.build_file), "BUILD.bazel")
 
-macos_local_sysroot = repository_rule(
-    implementation = _macos_local_sysroot_impl,
+macos_sdk_local = repository_rule(
+    implementation = _macos_sdk_local_impl,
     local = True,
     environ = ["MACOS_SYSROOT_PATH"],
     attrs = {

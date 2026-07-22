@@ -61,6 +61,7 @@ filegroup(
         ":imports",
         ":wrappers",
         "@llvm_darwin_aarch64//:all",
+        "@xcode_darwin//:all",
     ],
 )
 
@@ -82,7 +83,7 @@ filegroup(
     srcs = [
         ":compiler",
         ":wrappers",
-        "@llvm_darwin_aarch64//:ld",
+        "@xcode_darwin//:ld",
     ],
 )
 
@@ -121,8 +122,12 @@ cc_toolchain_config(
     c_compiler = "@llvm_darwin_aarch64//:clang",
     cc_compiler = "@llvm_darwin_aarch64//:clang++",
     compiler_features = [
+        #"//cc/features:no_legacy_features",
+        #"//cc/features/macos:runtime_library_search_directories",
         # Hermetic libraries feature required before import.
         "//third_party/rules_cc_toolchain/features:hermetic_libraries",
+        #"//cc/features:libraries_to_link",
+
         ":imports_feature",
         "//third_party/rules_cc_toolchain/features:undefined_symbols",
 
@@ -131,8 +136,8 @@ cc_toolchain_config(
         "//third_party/rules_cc_toolchain/features:errors",
         "//third_party/rules_cc_toolchain/features:reproducible",
         "//third_party/rules_cc_toolchain/features:language",
-        "//third_party/rules_cc_toolchain/features:use_lld",
-        "//cc/features:sysroot_darwin_aarch64",
+        #"//third_party/rules_cc_toolchain/features:use_lld",  # XCode linker should be used by default
+        "//cc/features/macos:sysroot",
         "//third_party/rules_cc_toolchain/features:coverage",
         #"//cc/features:clang19",    # TODO: Add a selection mechanism based on the Clang version
         "//cc/features:max_install_names",
@@ -163,7 +168,7 @@ cc_toolchain_config(
     ],
     dynamic_library_extension = ".dylib",
     install_name = "@llvm_darwin_aarch64//:install_name_tool_darwin",
-    linker = "@llvm_darwin_aarch64//:ld",
+    linker = "@xcode_darwin//:ld",
     strip_tool = "@llvm_darwin_aarch64//:strip",
     target_cpu = "aarch64",
     target_libc = "macosx",

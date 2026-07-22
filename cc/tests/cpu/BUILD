@@ -41,7 +41,10 @@ cc_binary(
 
 cc_test(
     name = "hello_world_test",
-    srcs = ["hello_world.cc"],
+    srcs = ["hello_world_test.cc"],
+    deps = [
+        "@gtest//:gtest_main",
+    ],
 )
 
 #############################################

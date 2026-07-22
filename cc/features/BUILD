@@ -20,6 +20,11 @@ load(
     "cc_toolchain_sysroot_feature",
 )
 
+load(
+    "//cc/features:libraries_to_link.bzl",
+    "libraries_to_link_feature",
+)
+
 package(
     default_visibility = [
         "//cc/impls/darwin_aarch64_darwin_aarch64:__pkg__",
@@ -32,6 +37,11 @@ package(
         "//cc/impls/linux_x86_64_linux_x86_64_rocm:__pkg__",
         "//cc/impls/linux_x86_64_linux_x86_64_sycl:__pkg__",
     ],
+)
+
+cc_feature(
+    name = "no_legacy_features",
+    enabled = True,
 )
 
 cc_feature(
@@ -231,3 +241,7 @@ cc_feature(
     enabled = True,
 )
 
+libraries_to_link_feature(
+    name = "libraries_to_link",
+    enabled = True,
+)

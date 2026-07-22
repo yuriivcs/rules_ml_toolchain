@@ -380,6 +380,8 @@ def _sysroot_feature(ctx):
                     flags = [
                         "--sysroot",
                         ctx.attr.sysroot.label.workspace_root,
+                        # TODO: Do we need this line for LLVM lld linker?
+                        # "-Wl,-syslibroot," + ctx.attr.sysroot.label.workspace_root,
                     ],
                 ),
             ],
