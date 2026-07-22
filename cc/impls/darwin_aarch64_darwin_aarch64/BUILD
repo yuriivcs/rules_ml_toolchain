@@ -125,7 +125,7 @@ cc_toolchain_config(
         #"//cc/features:no_legacy_features",
         #"//cc/features/macos:runtime_library_search_directories",
         # Hermetic libraries feature required before import.
-        "//third_party/rules_cc_toolchain/features:hermetic_libraries",
+        "//third_party/rules_cc_toolchain/features:hermetic",
         #"//cc/features:libraries_to_link",
 
         ":imports_feature",
@@ -135,9 +135,9 @@ cc_toolchain_config(
         "//third_party/rules_cc_toolchain/features:warnings",
         "//third_party/rules_cc_toolchain/features:errors",
         "//third_party/rules_cc_toolchain/features:reproducible",
-        "//third_party/rules_cc_toolchain/features:language",
+        "//cc/features:language",
         #"//third_party/rules_cc_toolchain/features:use_lld",  # XCode linker should be used by default
-        "//cc/features/macos:sysroot",
+        "//cc/features/darwin_aarch64:sysroot",
         "//third_party/rules_cc_toolchain/features:coverage",
         #"//cc/features:clang19",    # TODO: Add a selection mechanism based on the Clang version
         "//cc/features:max_install_names",

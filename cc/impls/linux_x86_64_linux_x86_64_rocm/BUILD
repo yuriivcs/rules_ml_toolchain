@@ -55,7 +55,7 @@ rocm_hipcc_feature(
     hipcc_path = hipcc_config().hipcc_path,
     host_compiler = "@llvm_linux_x86_64//:clang",
     rocm_path = hipcc_config().rocm_path,
-    rocm_toolkit = "@config_rocm_hipcc//rocm:rocm_root",
+    rocm_toolkit = "@config_rocm_hipcc//rocm:toolchain_data",
     version = str(hipcc_config().version_number),
     visibility = ["//visibility:public"],
 )
@@ -239,6 +239,7 @@ FEATURES_ESSENTIAL = [
     # Library imports
     ":imports_feature",
     ":startup_libs_feature",
+    ":static_link_libstdcxx",
 
     # ROCm-specific features
     ":rocm_hipcc_feature",
@@ -251,7 +252,7 @@ FEATURES_ESSENTIAL = [
     "//third_party/rules_cc_toolchain/features:warnings",
     "//third_party/rules_cc_toolchain/features:reproducible",
     "//third_party/rules_cc_toolchain/features:use_lld",
-    "//cc/features:sysroot_linux_x86_64",
+    "//cc/features/linux_x86_64:sysroot",
     # PIC / PIE flags
     "//third_party/rules_cc_toolchain/features:supports_pic",
     "//third_party/rules_cc_toolchain/features:position_independent_code",

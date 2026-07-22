@@ -34,10 +34,3 @@ runtime_library_search_directories(
     name = "runtime_library_search_directories",
     enabled = True,
 )
-
-cc_toolchain_sysroot_feature(
-    name = "sysroot",
-    enabled = True,
-    sysroot = "@sysroot_darwin_aarch64//:sysroot",
-    target = "arm64-apple-macosx15.1",
-)

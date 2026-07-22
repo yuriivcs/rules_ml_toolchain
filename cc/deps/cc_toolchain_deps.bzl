@@ -448,6 +448,7 @@ def cc_toolchain_deps():
     ################################################################
     # Local macOS XCode (for correct linking)
     if "xcode_darwin" not in native.existing_rules():
+        print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
         xcode_macos(
             name = "xcode_darwin",
         )
