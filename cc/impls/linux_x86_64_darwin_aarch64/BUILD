@@ -72,6 +72,7 @@ filegroup(
         ":wrappers",
         "@llvm_linux_x86_64//:clang",
         "@llvm_linux_x86_64//:clang++",
+        "@llvm_linux_x86_64//:scan_deps",
         "@llvm_linux_x86_64//:distro_libs",
         "@llvm_linux_x86_64//:asan_ignorelist",
     ],
@@ -124,10 +125,18 @@ cc_toolchain_config(
     c_compiler = "@llvm_linux_x86_64//:clang",
     cc_compiler = "@llvm_linux_x86_64//:clang++",
     compiler_features = [
-        # Hermetic libraries feature required before import.
-        "//third_party/rules_cc_toolchain/features:hermetic",
+        "//cc/features:include_paths",
+        "//cc/features:external_include_paths",
+        "//third_party/rules_cc_toolchain/features:hermetic",  # Hermetic libraries feature required before import
         ":imports_feature",
         "//third_party/rules_cc_toolchain/features:undefined_symbols",
+
+        # C++ modules
+        "//cc/features:cpp_modules",
+        "//cc/features:cpp_module_modmap_file",
+        "//cc/features:cpp20_module_compile_flags",
+        "//cc/features:dependency_file",
+        "//cc/features:random_seed",
 
         # Toolchain configuration
         "//third_party/rules_cc_toolchain/features:warnings",
@@ -135,7 +144,6 @@ cc_toolchain_config(
         "//third_party/rules_cc_toolchain/features:reproducible",
         "//cc/features:language",
         "//third_party/rules_cc_toolchain/features:use_lld",
-        "//cc/features/darwin_aarch64:sysroot",
         "//third_party/rules_cc_toolchain/features:coverage",
         #"//cc/features:clang19",    # TODO: Add a selection mechanism based on the Clang version
         "//cc/features:max_install_names",
@@ -153,15 +161,19 @@ cc_toolchain_config(
         "//cc/features:opt",
         "//cc/features:detect_issues",
 
-        # C++ standard configuration
+        # C++ standard flags
         "//third_party/rules_cc_toolchain/features:c++11",
         "//third_party/rules_cc_toolchain/features:c++14",
         "//third_party/rules_cc_toolchain/features:c++17",
+        "//third_party/rules_cc_toolchain/features:c++20",
 
-        #
+        # Other flags
         # "//cc/features:allow_shlib_undefined",  # Instead of --allow-shlib-undefined, macOS uses the -undefined flag with dynamic_lookup as an argument.
-        "//cc/features:supports_dynamic_linker",
         "//cc/features:supports_start_end_lib_feature",
+
+        "//cc/features/darwin_aarch64:sysroot",
+        "//cc/features:compiler_input_flags",
+        "//cc/features:compiler_output_flags",
     ],
     dynamic_library_extension = ".dylib",
     install_name = "@llvm_linux_x86_64//:install_name_tool_darwin",

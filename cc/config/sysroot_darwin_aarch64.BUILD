@@ -13,6 +13,7 @@
 # limitations under the License.
 # ==============================================================================
 
+load("@rules_cc//cc:defs.bzl", "cc_library")
 load(
     "@rules_ml_toolchain//third_party/rules_cc_toolchain:sysroot.bzl",
     "sysroot_package",
@@ -114,4 +115,18 @@ cc_toolchain_import(
         ":objc",
         ":core_foundation",
     ],
+)
+
+#============================================================================================
+# Extra libraries
+#============================================================================================
+cc_library(
+    name = "openmp_import",
+    visibility = ["//visibility:public"],
+)
+
+filegroup(
+    name = "openmp_copyright",
+    srcs = [],
+    visibility = ["//visibility:public"],
 )

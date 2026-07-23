@@ -15,29 +15,36 @@
 
 load("@bazel_tools//tools/build_defs/repo:local.bzl", "new_local_repository")
 
-# Use cases
-# Darwin -> Darwin
-#   Default value: $(xcrun --show-sdk-path)
-#       or
-#   Developer can override this value with help of MACOS_SYSROOT_PATH environment variable
+def _get_dir_path(rctx):
+    path = rctx.workspace_root.get_child(rctx.attr.default_path)
+    if not path.is_dir:
+        fail(
+            ("The repository's path is \"%s\" (absolute: \"%s\") but it does not exist or is not " +
+             "a directory.") % (rctx.attr.default_path, path),
+        )
+    return path
 
-# Linux -> Darwin
-#   Require valid path to available sysroot or print error otherwise
-def _macos_sdk_local_impl(ctx):
-    sdk_path = ctx.os.environ.get("MACOS_SYSROOT_PATH", "")
+def _macos_sdk_local_impl(rctx):
+    os_name = rctx.os.name
 
+    sdk_path = rctx.os.environ.get("MACOS_SYSROOT_PATH", "")
     if not sdk_path:
-        res = ctx.execute(["xcrun", "--show-sdk-path"])
-        if res.return_code != 0:
-            fail("Failed to find macOS SDK via xcrun: " + res.stderr)
-        sdk_path = res.stdout.strip()
+        if os_name.startswith("mac"):
+            res = rctx.execute(["xcrun", "--show-sdk-path"])
+            if res.return_code != 0:
+                fail("Failed to find macOS SDK via xcrun: " + res.stderr)
+            sdk_path = res.stdout.strip()
+        elif os_name.startswith("linux"):
+            sdk_path = rctx.attr.default_path
 
-    print("macos_sdk_local: sdk_path = " + sdk_path)
-    links = ["System", "usr"]
-    for link in links:
-        ctx.symlink(sdk_path + "/" + link, link)
+        else:
+            fail("Unsupported operation system '" + os_name + "' for macOS targets build.")
 
-    ctx.symlink(ctx.path(ctx.attr.build_file), "BUILD.bazel")
+    sub_paths = _get_dir_path(rctx).readdir()
+    for path in sub_paths:
+        rctx.symlink(path, path.basename)
+
+    rctx.symlink(rctx.path(rctx.attr.build_file), "BUILD.bazel")
 
 macos_sdk_local = repository_rule(
     implementation = _macos_sdk_local_impl,
@@ -45,7 +52,11 @@ macos_sdk_local = repository_rule(
     environ = ["MACOS_SYSROOT_PATH"],
     attrs = {
         "build_file": attr.label(
-            doc = "A file to use as a BUILD file for this repo.",
+            doc = "A file to use as a BUILD file for this repository",
+            mandatory = True,
+        ),
+        "default_path": attr.string(
+            doc = "Default path to macOS SDK",
             mandatory = True,
         ),
     },

@@ -151,6 +151,7 @@ def cc_toolchain_deps():
         macos_sdk_local(
             name = "sysroot_darwin_aarch64",
             build_file = "@rules_ml_toolchain//cc/config:sysroot_darwin_aarch64.BUILD",
+            default_path = "cc/sysroots/darwin_aarch64/MacOSX.sdk",
         )
 
         #new_local_repository(

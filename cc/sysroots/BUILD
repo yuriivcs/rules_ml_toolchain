@@ -26,6 +26,7 @@ alias(
     actual = select({
         "//common:is_linux_x86_64": "@sysroot_linux_x86_64//:openmp_import",
         "//common:is_linux_aarch64": "@sysroot_linux_aarch64//:openmp_import",
+        "//common:is_macos_aarch64": "@sysroot_darwin_aarch64//:openmp_import",
     }),
     visibility = ["//visibility:public"],
 )
@@ -35,6 +36,7 @@ alias(
     actual = select({
         "//common:is_linux_x86_64": "@sysroot_linux_x86_64//:openmp_copyright",
         "//common:is_linux_aarch64": "@sysroot_linux_aarch64//:openmp_copyright",
+        "//common:is_macos_aarch64": "@sysroot_darwin_aarch64//:openmp_copyright",
     }),
 )
 
