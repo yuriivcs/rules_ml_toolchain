@@ -160,10 +160,10 @@ cc_toolchain_config(
         "//third_party/rules_cc_toolchain/features:c++11",
         "//third_party/rules_cc_toolchain/features:c++14",
         "//third_party/rules_cc_toolchain/features:c++17",
+        "//third_party/rules_cc_toolchain/features:c++20",
 
         #
         # "//cc/features:allow_shlib_undefined",  # Instead of --allow-shlib-undefined, macOS uses the -undefined flag with dynamic_lookup as an argument.
-        "//cc/features:supports_dynamic_linker",
         "//cc/features:supports_start_end_lib_feature",
     ],
     dynamic_library_extension = ".dylib",
