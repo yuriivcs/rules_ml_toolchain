@@ -237,6 +237,7 @@ filegroup(
 )
 
 FEATURES_ESSENTIAL = [
+    "//cc/features:dependency_file",
     "//cc/features:include_paths",
     "//cc/features:external_include_paths",
 
@@ -251,7 +252,6 @@ FEATURES_ESSENTIAL = [
     "//cc/features:cpp_modules",
     "//cc/features:cpp_module_modmap_file",
     "//cc/features:cpp20_module_compile_flags",
-    "//cc/features:dependency_file",
     "//cc/features:random_seed",
 
     # Toolchain configuration
@@ -309,6 +309,7 @@ cc_toolchain_config(
     linker = "@llvm_linux_x86_64//:ld",
     strip_tool = "@llvm_linux_x86_64//:strip",
     module_deps_scanner = "@llvm_linux_x86_64//:scan_deps",
+    headers_parser = "@llvm_linux_x86_64//:clang",
     target_cpu = "x86_64",
     target_system_name = "local",
     tool_paths = CUDA_TOOLS,

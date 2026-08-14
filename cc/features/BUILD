@@ -21,9 +21,7 @@ load(
     "//third_party/rules_cc_toolchain/features:features.bzl",
     "cc_feature",
     "cc_toolchain_import_feature",
-    "cc_toolchain_sysroot_feature",
 )
-
 load(
     ":features.bzl",
     "compiler_input_feature",
@@ -32,10 +30,9 @@ load(
     "include_paths_feature",
     "external_include_paths_feature",
 )
-
 load(
-    "//cc/features:libraries_to_link.bzl",
-    "libraries_to_link_feature",
+    "//cc/features/linux:runtime_library_search_directories.bzl",
+    "runtime_library_search_directories",
 )
 
 package(
@@ -50,11 +47,6 @@ package(
         "//cc/impls/linux_x86_64_linux_x86_64_rocm:__pkg__",
         "//cc/impls/linux_x86_64_linux_x86_64_sycl:__pkg__",
     ],
-)
-
-cc_feature(
-    name = "no_legacy_features",
-    enabled = True,
 )
 
 cc_feature(
@@ -257,9 +249,11 @@ cc_feature(
     enabled = True,
 )
 
-libraries_to_link_feature(
-    name = "libraries_to_link",
-    enabled = True,
+# Runtime library search directories feature
+# This overrides the default action_config-embedded flag_sets to ensure
+# proper with_features support for no_solib_rpaths
+runtime_library_search_directories(
+    name = "runtime_library_search_directories",
 )
 
 cc_feature(
@@ -309,9 +303,7 @@ cc_feature(
         ACTION_NAMES.clif_match,
     ],
     flags = [
-        # -MMD instructs Clang generate a dependency file, but do not include headers found in -isystem directories.
-        # Replace "-MMD" to "-MD" when grpc project will fix 'undeclared inclusion' errors
-        "-MMD",
+        "-MD",
         "-MF",
         "%{dependency_file}"
     ],

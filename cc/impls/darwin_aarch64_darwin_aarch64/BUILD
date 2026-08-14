@@ -122,11 +122,8 @@ cc_toolchain_config(
     c_compiler = "@llvm_darwin_aarch64//:clang",
     cc_compiler = "@llvm_darwin_aarch64//:clang++",
     compiler_features = [
-        #"//cc/features:no_legacy_features",
-        #"//cc/features/macos:runtime_library_search_directories",
         # Hermetic libraries feature required before import.
         "//third_party/rules_cc_toolchain/features:hermetic",
-        #"//cc/features:libraries_to_link",
 
         ":imports_feature",
         "//third_party/rules_cc_toolchain/features:undefined_symbols",
@@ -136,7 +133,6 @@ cc_toolchain_config(
         "//third_party/rules_cc_toolchain/features:errors",
         "//third_party/rules_cc_toolchain/features:reproducible",
         "//cc/features:language",
-        #"//third_party/rules_cc_toolchain/features:use_lld",  # XCode linker should be used by default
         "//cc/features/darwin_aarch64:sysroot",
         "//third_party/rules_cc_toolchain/features:coverage",
         #"//cc/features:clang19",    # TODO: Add a selection mechanism based on the Clang version
