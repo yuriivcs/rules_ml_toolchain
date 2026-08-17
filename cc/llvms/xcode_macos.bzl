@@ -14,11 +14,18 @@
 # ==============================================================================
 
 def _xcode_macos_impl(ctx):
-    cmd = ctx.execute(["xcode-select", "-p"])
-    if cmd.return_code != 0:
-        fail("Failed to find macOS XCODE via xcrun: " + cmd.stderr)
+    developer_dir = ctx.os.environ.get("DEVELOPER_DIR", "").strip()
 
-    xcode_toolchain_path = cmd.stdout.strip() + "/Toolchains/XcodeDefault.xctoolchain/"
+    if developer_dir:
+        xcode_path = developer_dir
+    else:
+        # 2. Fall back to the system default if the env var is not set
+        cmd = ctx.execute(["xcode-select", "-p"])
+        if cmd.return_code != 0:
+            fail("Failed to find macOS XCODE via xcode-select: " + cmd.stderr)
+        xcode_path = cmd.stdout.strip()
+
+    xcode_toolchain_path = xcode_path + "/Toolchains/XcodeDefault.xctoolchain/"
 
     print("macos_xcode_local: xcode_toolchain_path = " + xcode_toolchain_path)
 
