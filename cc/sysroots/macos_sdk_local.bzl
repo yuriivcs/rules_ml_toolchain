@@ -28,9 +28,21 @@ def _macos_sdk_local_impl(rctx):
     os_name = rctx.os.name
 
     sdk_path = rctx.os.environ.get("MACOS_SYSROOT_PATH", "")
+
     if not sdk_path:
+        developer_dir = rctx.os.environ.get("DEVELOPER_DIR", "").strip()
         if os_name.startswith("mac"):
-            res = rctx.execute(["xcrun", "--show-sdk-path"])
+            args = ["env",
+                    "-i",
+                    "DEVELOPER_DIR={}".format(developer_dir)
+                ] if developer_dir else []
+
+            args += [
+                "xcrun",
+                "--show-sdk-path"
+            ]
+
+            res = rctx.execute(args)
             if res.return_code != 0:
                 fail("Failed to find macOS SDK via xcrun: " + res.stderr)
             sdk_path = res.stdout.strip()
