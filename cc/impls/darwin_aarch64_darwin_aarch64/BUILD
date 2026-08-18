@@ -61,7 +61,6 @@ filegroup(
         ":imports",
         ":wrappers",
         "@llvm_darwin_aarch64//:all",
-        "@xcode_darwin//:all",
     ],
 )
 
@@ -83,7 +82,7 @@ filegroup(
     srcs = [
         ":compiler",
         ":wrappers",
-        "@xcode_darwin//:ld",
+        "@llvm_darwin_aarch64//:ld",
     ],
 )
 
@@ -133,6 +132,7 @@ cc_toolchain_config(
         "//third_party/rules_cc_toolchain/features:errors",
         "//third_party/rules_cc_toolchain/features:reproducible",
         "//cc/features:language",
+        "//third_party/rules_cc_toolchain/features:use_lld",
         "//cc/features/darwin_aarch64:sysroot",
         "//third_party/rules_cc_toolchain/features:coverage",
         #"//cc/features:clang19",    # TODO: Add a selection mechanism based on the Clang version
@@ -164,7 +164,7 @@ cc_toolchain_config(
     ],
     dynamic_library_extension = ".dylib",
     install_name = "@llvm_darwin_aarch64//:install_name_tool_darwin",
-    linker = "@xcode_darwin//:ld",
+    linker = "@llvm_darwin_aarch64//:ld",
     strip_tool = "@llvm_darwin_aarch64//:strip",
     target_cpu = "aarch64",
     target_libc = "macosx",

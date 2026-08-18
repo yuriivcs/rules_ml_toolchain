@@ -163,7 +163,6 @@ hipcc_configure(
 toolchain = use_extension("//extensions:toolchain.bzl", "toolchain_ext")
 use_repo(
     toolchain,
-    "xcode_darwin",
     "llvm18_linux_aarch64",
     "llvm18_linux_x86_64",
     "llvm19_linux_x86_64",

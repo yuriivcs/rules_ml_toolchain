@@ -447,13 +447,6 @@ def cc_toolchain_deps():
     ################################################################
     # Darwin (macOS) aarch64 LLVM
     ################################################################
-    # Local macOS XCode (for correct linking)
-    if "xcode_darwin" not in native.existing_rules():
-        print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-        xcode_macos(
-            name = "xcode_darwin",
-        )
-
 
     if "llvm_darwin_aarch64" not in native.existing_rules():
         llvm(
