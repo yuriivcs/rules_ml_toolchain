@@ -125,8 +125,10 @@ cc_toolchain_config(
     c_compiler = "@llvm_linux_x86_64//:clang",
     cc_compiler = "@llvm_linux_x86_64//:clang++",
     compiler_features = [
-        # Hermetic libraries feature required before import.
-        "//third_party/rules_cc_toolchain/features:hermetic",
+        "//cc/features:dependency_file",
+        "//cc/features:include_paths",
+        "//cc/features:external_include_paths",
+        "//third_party/rules_cc_toolchain/features:hermetic",  # Hermetic libraries feature required before import
         ":imports_feature",
         "//third_party/rules_cc_toolchain/features:undefined_symbols",
 
@@ -136,7 +138,6 @@ cc_toolchain_config(
         "//third_party/rules_cc_toolchain/features:reproducible",
         "//cc/features:language",
         "//third_party/rules_cc_toolchain/features:use_lld",
-        "//cc/features/darwin_aarch64:sysroot",
         "//third_party/rules_cc_toolchain/features:coverage",
         #"//cc/features:clang19",    # TODO: Add a selection mechanism based on the Clang version
         "//cc/features:max_install_names",
@@ -162,6 +163,7 @@ cc_toolchain_config(
         # Other flags
         # "//cc/features:allow_shlib_undefined",  # Instead of --allow-shlib-undefined, macOS uses the -undefined flag with dynamic_lookup as an argument.
         #"//cc/features:supports_dynamic_linker", # Link statically for Darwin
+        "//cc/features/darwin_aarch64:sysroot",
         "//cc/features:supports_start_end_lib_feature",
         "//cc/features:compiler_input_flags",
         "//cc/features:compiler_output_flags",
@@ -170,6 +172,8 @@ cc_toolchain_config(
     install_name = "@llvm_linux_x86_64//:install_name_tool_darwin",
     linker = "@llvm_linux_x86_64//:ld",
     strip_tool = "@llvm_linux_x86_64//:strip",
+    module_deps_scanner = "@llvm_linux_x86_64//:scan_deps",
+    headers_parser = "@llvm_linux_x86_64//:clang",
     target_cpu = "aarch64",
     target_libc = "macosx",
     target_system_name = "local",
