@@ -21,7 +21,7 @@ load("//common:repo.bzl", "tf_mirror_urls")
 load("//cc/llvms:llvm.bzl", "llvm")
 load("//cc/llvms:xcode_macos.bzl", "xcode_macos")
 load("//cc/sysroots:sysroot.bzl", "sysroot")
-load("//cc/sysroots:macos_sdk_local.bzl", "macos_sdk_local")
+load("//cc/sysroots:macos_sdk.bzl", "macos_sdk")
 
 def cc_toolchain_deps():
     tool_archive(
@@ -148,7 +148,7 @@ def cc_toolchain_deps():
     # Darwin (macOS) aarch64 sysroot
     ################################################################
     if "sysroot_darwin_aarch64" not in native.existing_rules():
-        macos_sdk_local(
+        macos_sdk(
             name = "sysroot_darwin_aarch64",
             build_file = "@rules_ml_toolchain//cc/config:sysroot_darwin_aarch64.BUILD",
             default_path = "cc/sysroots/darwin_aarch64/MacOSX.sdk",
@@ -449,7 +449,6 @@ def cc_toolchain_deps():
     ################################################################
     # Local macOS XCode (for correct linking)
     if "xcode_darwin" not in native.existing_rules():
-        print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
         xcode_macos(
             name = "xcode_darwin",
         )

@@ -15,20 +15,19 @@
 
 load("@bazel_tools//tools/build_defs/repo:local.bzl", "new_local_repository")
 
-def _get_dir_path(rctx):
-    path = rctx.workspace_root.get_child(rctx.attr.default_path)
+def _get_dir_path(rctx, path_str):
+    path = rctx.workspace_root.get_child(path_str)
     if not path.is_dir:
         fail(
             ("The repository's path is \"%s\" (absolute: \"%s\") but it does not exist or is not " +
-             "a directory.") % (rctx.attr.default_path, path),
+             "a directory.") % (path_str, path),
         )
     return path
 
-def _macos_sdk_local_impl(rctx):
+def _macos_sdk_impl(rctx):
     os_name = rctx.os.name
 
     sdk_path = rctx.os.environ.get("MACOS_SYSROOT_PATH", "")
-
     if not sdk_path:
         developer_dir = rctx.os.environ.get("DEVELOPER_DIR", "").strip()
         if os_name.startswith("mac"):
@@ -48,18 +47,20 @@ def _macos_sdk_local_impl(rctx):
             sdk_path = res.stdout.strip()
         elif os_name.startswith("linux"):
             sdk_path = rctx.attr.default_path
-
         else:
             fail("Unsupported operation system '" + os_name + "' for macOS targets build.")
 
-    sub_paths = _get_dir_path(rctx).readdir()
+    print("============================================")
+    print("_macos_sdk_impl: sdk_path = " + sdk_path)
+
+    sub_paths = _get_dir_path(rctx, sdk_path).readdir()
     for path in sub_paths:
         rctx.symlink(path, path.basename)
 
     rctx.symlink(rctx.path(rctx.attr.build_file), "BUILD.bazel")
 
-macos_sdk_local = repository_rule(
-    implementation = _macos_sdk_local_impl,
+macos_sdk = repository_rule(
+    implementation = _macos_sdk_impl,
     local = True,
     environ = ["MACOS_SYSROOT_PATH"],
     attrs = {
