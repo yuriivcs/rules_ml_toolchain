@@ -68,10 +68,11 @@ filegroup(
 filegroup(
     name = "compiler",
     srcs = [
-        ":all",
+        ":imports",
         ":wrappers",
         "@llvm_linux_x86_64//:clang",
         "@llvm_linux_x86_64//:clang++",
+        "@llvm_linux_x86_64//:scan_deps",
         "@llvm_linux_x86_64//:distro_libs",
         "@llvm_linux_x86_64//:asan_ignorelist",
     ],
@@ -133,7 +134,7 @@ cc_toolchain_config(
         "//third_party/rules_cc_toolchain/features:warnings",
         "//third_party/rules_cc_toolchain/features:errors",
         "//third_party/rules_cc_toolchain/features:reproducible",
-        "//third_party/rules_cc_toolchain/features:language",
+        "//cc/features:language",
         "//third_party/rules_cc_toolchain/features:use_lld",
         "//cc/features/darwin_aarch64:sysroot",
         "//third_party/rules_cc_toolchain/features:coverage",
@@ -153,15 +154,17 @@ cc_toolchain_config(
         "//cc/features:opt",
         "//cc/features:detect_issues",
 
-        # C++ standard configuration
+        # C++ standard flags
         "//third_party/rules_cc_toolchain/features:c++11",
         "//third_party/rules_cc_toolchain/features:c++14",
         "//third_party/rules_cc_toolchain/features:c++17",
 
-        #
+        # Other flags
         # "//cc/features:allow_shlib_undefined",  # Instead of --allow-shlib-undefined, macOS uses the -undefined flag with dynamic_lookup as an argument.
-        "//cc/features:supports_dynamic_linker",
+        #"//cc/features:supports_dynamic_linker", # Link statically for Darwin
         "//cc/features:supports_start_end_lib_feature",
+        "//cc/features:compiler_input_flags",
+        "//cc/features:compiler_output_flags",
     ],
     dynamic_library_extension = ".dylib",
     install_name = "@llvm_linux_x86_64//:install_name_tool_darwin",
