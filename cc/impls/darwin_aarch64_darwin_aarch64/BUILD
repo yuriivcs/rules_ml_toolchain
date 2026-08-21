@@ -121,6 +121,13 @@ cc_toolchain_config(
     archiver = "@llvm_darwin_aarch64//:ar",
     c_compiler = "@llvm_darwin_aarch64//:clang",
     cc_compiler = "@llvm_darwin_aarch64//:clang++",
+    # TODO: Replace by permanent solution
+    cxx_builtin_include_directories = [
+        "%workspace%/external/llvm18_darwin_aarch64/lib/clang/18/include",
+        "%workspace%/external/sysroot_darwin_aarch64/usr/include/c++/v1",
+        "%workspace%/external/sysroot_darwin_aarch64/usr/include",
+        "%workspace%/external/sysroot_darwin_aarch64/System/Library/Frameworks",
+    ],
     compiler_features = [
         # Hermetic libraries feature required before import.
         "//third_party/rules_cc_toolchain/features:hermetic",
