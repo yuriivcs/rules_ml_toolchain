@@ -305,6 +305,7 @@ def cc_toolchain_deps():
             default_version = "18",
             versions = {
                 "@llvm18_linux_aarch64//:all": "18",
+                "@llvm19_linux_aarch64//:all": "19",
                 "@llvm20_linux_aarch64//:all": "20",
                 "@llvm21_linux_aarch64//:all": "21",
                 "@llvm22_linux_aarch64//:all": "22",
@@ -321,6 +322,39 @@ def cc_toolchain_deps():
             mirrored_tar_sha256 = "26a52cc6c658736f822546f220216178ac50d75ac1809bf8608395c8edd7c2c1",
             build_file = Label("//cc/config:llvm18_linux_aarch64.BUILD"),
             strip_prefix = "clang+llvm-18.1.8-aarch64-linux-gnu",
+            remote_file_urls = {
+                "lib/libz.so.1": ["https://storage.googleapis.com/ml-sysroot-testing/llvm/aarch64-linux/v2/libz.so.1"],
+                "lib/libz-copyright.txt": ["https://storage.googleapis.com/ml-sysroot-testing/llvm/aarch64-linux/v2/libz-copyright.txt"],
+                "lib/liblzma.so.5": ["https://storage.googleapis.com/ml-sysroot-testing/llvm/aarch64-linux/v2/liblzma.so.5"],
+                "lib/liblzma-copying.GPLv2.txt": ["https://storage.googleapis.com/ml-sysroot-testing/llvm/aarch64-linux/v2/liblzma-copying.GPLv2.txt"],
+                "lib/liblzma-copying.GPLv3.txt": ["https://storage.googleapis.com/ml-sysroot-testing/llvm/aarch64-linux/v2/liblzma-copying.GPLv3.txt"],
+                "lib/liblzma-copying.LGPLv2.1.txt": ["https://storage.googleapis.com/ml-sysroot-testing/llvm/aarch64-linux/v2/liblzma-copying.LGPLv2.1.txt"],
+                "lib/liblzma-copying.txt": ["https://storage.googleapis.com/ml-sysroot-testing/llvm/aarch64-linux/v2/liblzma-copying.txt"],
+                "lib/libxml2.so.2": ["https://storage.googleapis.com/ml-sysroot-testing/llvm/aarch64-linux/v2/libxml2.so.2"],
+                "lib/libxml2-copyright.txt": ["https://storage.googleapis.com/ml-sysroot-testing/llvm/aarch64-linux/v2/libxml2-copyright.txt"],
+            },
+            remote_file_integrity = {
+                "lib/libz.so.1": "sha256-rV8Qd2EfXMqm3NRHq71bROnQrI8CR/8dtEGj7VJHAFg=",
+                "lib/libz-copyright.txt": "sha256-xLXv1S2NZl8XVG5po6j8G5AyOG3JaS2cei2cgBy63+Q=",
+                "lib/liblzma.so.5": "sha256-xnKtiQ6N5HGZ4/LZwFnXAV4tFdsp3N4m03jnEmsXEtU=",
+                "lib/liblzma-copying.GPLv2.txt": "sha256-qxX9UmvY3Rip5368E5ZWv00z6X/HI4zRG/YOK5uGZsY=",
+                "lib/liblzma-copying.GPLv3.txt": "sha256-jOtLnuWt7d5Hsx6XXB2QxzrSe2sWWh3NgMfFRetluQM=",
+                "lib/liblzma-copying.LGPLv2.1.txt": "sha256-4jf6VmaAMOkoVR3dYPBd9f6Vf3XquHS70Bfghe1yLnw=",
+                "lib/liblzma-copying.txt": "sha256-SDmAFuIPkWdsEeUNUGbSZor9o8Fhp13P1HMR9S8iDxQ=",
+                "lib/libxml2.so.2": "sha256-9ckknFripHulRXSH/sHWYkczPD/oRFjbVrapESa8n+I=",
+                "lib/libxml2-copyright.txt": "sha256-XUhziEqJASKkubIK1WrG99odeWpb/PBKQnlwrJYhdiY=",
+            },
+        )
+
+    if "llvm19_linux_aarch64" not in native.existing_rules():
+        # LLVM 19 Linux aarch64
+        mirrored_http_archive(
+            name = "llvm19_linux_aarch64",
+            urls = tf_mirror_urls("https://github.com/llvm/llvm-project/releases/download/llvmorg-19.1.7/clang+llvm-19.1.7-aarch64-linux-gnu.tar.xz"),
+            sha256 = "a73d9326e5d756e3937df6a9f621664d76403b59119f741901106b387e53a6ae",
+            mirrored_tar_sha256 = "9f8aa21e6bbc9cb1c641bfa5ed2f9ac28b8aff54ce65d4de99ceb9f43e5a4fc2",
+            build_file = Label("//cc/config:llvm19_linux_aarch64.BUILD"),
+            strip_prefix = "clang+llvm-19.1.7-aarch64-linux-gnu",
             remote_file_urls = {
                 "lib/libz.so.1": ["https://storage.googleapis.com/ml-sysroot-testing/llvm/aarch64-linux/v2/libz.so.1"],
                 "lib/libz-copyright.txt": ["https://storage.googleapis.com/ml-sysroot-testing/llvm/aarch64-linux/v2/libz-copyright.txt"],
