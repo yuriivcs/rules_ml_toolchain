@@ -15,13 +15,13 @@
 
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 load("@bazel_tools//tools/build_defs/repo:local.bzl", "new_local_repository")
-load("//common:mirrored_http_archive.bzl", "mirrored_http_archive")
-load("//common:tar_extraction_utils.bzl", "tool_archive")
-load("//common:repo.bzl", "tf_mirror_urls")
 load("//cc/llvms:llvm.bzl", "llvm")
 load("//cc/llvms:xcode_macos.bzl", "xcode_macos")
-load("//cc/sysroots:sysroot.bzl", "sysroot")
 load("//cc/sysroots:macos_sdk.bzl", "macos_sdk")
+load("//cc/sysroots:sysroot.bzl", "sysroot")
+load("//common:mirrored_http_archive.bzl", "mirrored_http_archive")
+load("//common:repo.bzl", "tf_mirror_urls")
+load("//common:tar_extraction_utils.bzl", "tool_archive")
 
 def cc_toolchain_deps():
     tool_archive(
@@ -453,13 +453,13 @@ def cc_toolchain_deps():
             name = "xcode_darwin",
         )
 
-
     if "llvm_darwin_aarch64" not in native.existing_rules():
         llvm(
             name = "llvm_darwin_aarch64",
             default_version = "18",
             versions = {
                 "@llvm18_darwin_aarch64//:all": "18",
+                "@llvm19_darwin_aarch64//:all": "19",
                 "@llvm20_darwin_aarch64//:all": "20",
             },
             build_file_tpl = Label("//cc/llvms:llvm_darwin.BUILD.tpl"),
@@ -473,6 +473,16 @@ def cc_toolchain_deps():
             mirrored_tar_sha256 = "abf9636295730364bfe4cfa6b491dc8476587bd6d7271e3011dafdb5e382bcdf",
             build_file = Label("//cc/config:llvm18_darwin_aarch64.BUILD"),
             strip_prefix = "clang+llvm-18.1.8-arm64-apple-macos11",
+        )
+
+    if "llvm19_darwin_aarch64" not in native.existing_rules():
+        mirrored_http_archive(
+            name = "llvm19_darwin_aarch64",
+            urls = tf_mirror_urls("https://github.com/llvm/llvm-project/releases/download/llvmorg-19.1.7/LLVM-19.1.7-macOS-ARM64.tar.xz"),
+            sha256 = "d93bf12952d89fe4ec7501c40475718b722407da6a8d651f05c995863468e570",
+            mirrored_tar_sha256 = "72ac0dbeb561dd4890bf73dfab6e9f241f296889835f86bc958d2837c9a03192",
+            build_file = Label("//cc/config:llvm19_darwin_aarch64.BUILD"),
+            strip_prefix = "LLVM-19.1.7-macOS-ARM64",
         )
 
     if "llvm20_darwin_aarch64" not in native.existing_rules():
