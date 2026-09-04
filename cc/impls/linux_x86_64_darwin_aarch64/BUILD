@@ -44,6 +44,7 @@ cc_toolchain_import(
         "@llvm_linux_x86_64//:compiler_incs",
         "@sysroot_darwin_aarch64//:sys_incs",
         "@sysroot_darwin_aarch64//:sys_libs",
+        "@llvm_darwin_aarch64//:libclang_rt",
     ],
     visibility = ["//visibility:public"],
 )
@@ -132,6 +133,12 @@ cc_toolchain_config(
         ":imports_feature",
         "//third_party/rules_cc_toolchain/features:undefined_symbols",
 
+        #        # C++ modules temporary disabled
+        #        "//cc/features:cpp_modules",
+        #        "//cc/features:cpp_module_modmap_file",
+        #        "//cc/features:cpp20_module_compile_flags",
+        #        "//cc/features:random_seed",
+
         # Toolchain configuration
         "//third_party/rules_cc_toolchain/features:warnings",
         "//third_party/rules_cc_toolchain/features:errors",
@@ -146,6 +153,7 @@ cc_toolchain_config(
         # PIC / PIE flags
         "//third_party/rules_cc_toolchain/features:supports_pic",
         "//third_party/rules_cc_toolchain/features:position_independent_code",
+        "//third_party/rules_cc_toolchain/features:position_independent_executable",
 
         # Optimization flags
         "//cc/features:garbage_collect_symbols_mac",
@@ -159,6 +167,7 @@ cc_toolchain_config(
         "//third_party/rules_cc_toolchain/features:c++11",
         "//third_party/rules_cc_toolchain/features:c++14",
         "//third_party/rules_cc_toolchain/features:c++17",
+        "//third_party/rules_cc_toolchain/features:c++20",
 
         # Other flags
         # "//cc/features:allow_shlib_undefined",  # Instead of --allow-shlib-undefined, macOS uses the -undefined flag with dynamic_lookup as an argument.
