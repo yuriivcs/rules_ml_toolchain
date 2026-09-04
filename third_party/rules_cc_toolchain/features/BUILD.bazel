@@ -29,6 +29,7 @@ load(
 
 package(
     default_visibility = [
+        "@darwin_local_config_cc//:__pkg__",
         "//cc:__pkg__",
         "//cc/impls/cpu:__pkg__",
         "//cc/impls/cuda:__pkg__",

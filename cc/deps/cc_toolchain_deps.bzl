@@ -19,6 +19,7 @@ load("//cc/llvms:llvm.bzl", "llvm")
 load("//cc/llvms:xcode_macos.bzl", "xcode_macos")
 load("//cc/sysroots:macos_sdk.bzl", "macos_sdk")
 load("//cc/sysroots:sysroot.bzl", "sysroot")
+load("//cc/impls/darwin_aarch64_darwin_aarch64:darwin_local_config_cc.bzl", "darwin_local_config_cc")
 load("//common:mirrored_http_archive.bzl", "mirrored_http_archive")
 load("//common:repo.bzl", "tf_mirror_urls")
 load("//common:tar_extraction_utils.bzl", "tool_archive")
@@ -159,6 +160,12 @@ def cc_toolchain_deps():
         #    build_file = "//cc/config:sysroot_darwin_aarch64.BUILD",
         #    path = "cc/sysroots/darwin_aarch64/MacOSX.sdk",
         #)
+
+    if "darwin_local_config_cc" not in native.existing_rules():
+        darwin_local_config_cc(
+            name = "darwin_local_config_cc",
+            sysroot = "@sysroot_darwin_aarch64",
+        )
 
     ################################################################
     # Linux x86_64 LLVM

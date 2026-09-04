@@ -1,0 +1,4 @@
+alias(
+    name = "toolchain",
+    actual = "@darwin_local_config_cc//:toolchain"
+)

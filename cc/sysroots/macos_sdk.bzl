@@ -27,6 +27,9 @@ def _get_dir_path(rctx, path_str):
 def _macos_sdk_impl(rctx):
     os_name = rctx.os.name
 
+    print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
+    print(rctx.name)
+
     sdk_path = rctx.os.environ.get("MACOS_SYSROOT_PATH", "")
     if not sdk_path:
         developer_dir = rctx.os.environ.get("DEVELOPER_DIR", "").strip()
@@ -45,6 +48,7 @@ def _macos_sdk_impl(rctx):
             if res.return_code != 0:
                 fail("Failed to find macOS SDK via xcrun: " + res.stderr)
             sdk_path = res.stdout.strip()
+
         elif os_name.startswith("linux"):
             sdk_path = rctx.attr.default_path
         else:
