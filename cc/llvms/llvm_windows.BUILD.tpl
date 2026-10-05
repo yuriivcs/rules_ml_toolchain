@@ -1,0 +1,86 @@
+# Copyright 2026 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+# ==============================================================================
+
+alias(
+    name = "all",
+    actual = "@@%{llvm_repo_name}//:all",
+    visibility = ["//visibility:public"],
+)
+
+alias(
+    name = "clang",
+    actual = "@@%{llvm_repo_name}//:clang",
+    visibility = ["//visibility:public"],
+)
+
+alias(
+    name = "clang++",
+    actual = "@@%{llvm_repo_name}//:clang++",
+    visibility = ["//visibility:public"],
+)
+
+alias(
+    name = "ar",
+    actual = "@@%{llvm_repo_name}//:ar",
+    visibility = ["//visibility:public"],
+)
+
+alias(
+    name = "llvm-ar",
+    actual = "@@%{llvm_repo_name}//:bin/llvm-ar.exe",
+    visibility = ["//visibility:public"],
+)
+
+alias(
+    name = "distro_libs",
+    actual = "@@%{llvm_repo_name}//:distro_libs",
+    visibility = ["//visibility:public"],
+)
+
+alias(
+    name = "compiler_incs",
+    actual = "@@%{llvm_repo_name}//:compiler_incs",
+    visibility = ["//visibility:public"],
+)
+
+alias(
+    name = "libclang_rt",
+    actual = "@@%{llvm_repo_name}//:libclang_rt",
+    visibility = ["//visibility:public"],
+)
+
+alias(
+    name = "flang",
+    actual = "@@%{llvm_repo_name}//:flang",
+    visibility = ["//visibility:public"],
+)
+
+alias(
+    name = "flang_incs",
+    actual = "@@%{llvm_repo_name}//:flang_incs",
+    visibility = ["//visibility:public"],
+)
+
+alias(
+    name = "fortran_libs",
+    actual = "@@%{llvm_repo_name}//:fortran_libs",
+    visibility = ["//visibility:public"],
+)
+
+alias(
+    name = "fortran_main",
+    actual = "@@%{llvm_repo_name}//:fortran_main",
+    visibility = ["//visibility:public"],
+)
