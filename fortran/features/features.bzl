@@ -155,7 +155,7 @@ def _fortran_sysroot_feature_impl(ctx):
             prefix = target.split("macosx")[0]
             target = "{}macosx{}".format(prefix, macos_min_os)
 
-    sysroot_path = ctx.attr.sysroot.label.workspace_root
+    sysroot_path = ctx.attr.sysroot.label.workspace_root if ctx.attr.sysroot else ""
 
     return [
         FortranFeatureInfo(
@@ -182,7 +182,7 @@ fortran_toolchain_sysroot_feature = rule(
         "enabled": attr.bool(default = False),
         "provides": attr.string_list(default = []),
         "implies": attr.label_list(default = [], providers = [FortranFeatureInfo]),
-        "sysroot": attr.label(mandatory = True),
+        "sysroot": attr.label(mandatory = False),
         "target": attr.string(mandatory = True),
     },
     provides = [FortranFeatureInfo],

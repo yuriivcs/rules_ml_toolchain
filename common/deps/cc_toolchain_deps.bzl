@@ -522,3 +522,50 @@ def cc_toolchain_deps():
             build_file = Label("//common/config:llvm20_darwin_aarch64.BUILD"),
             strip_prefix = "LLVM-20.1.8-macOS-ARM64",
         )
+
+    ################################################################
+    # Windows x86_64 LLVM (Flang)
+    ################################################################
+
+    if "llvm_windows_x86_64" not in native.existing_rules():
+        llvm(
+            name = "llvm_windows_x86_64",
+            default_version = "21",
+            versions = {
+                "@llvm20_windows_x86_64//:all": "20",
+                "@llvm21_windows_x86_64//:all": "21",
+                "@llvm22_windows_x86_64//:all": "22",
+            },
+            build_file_tpl = Label("//cc/llvms:llvm_windows.BUILD.tpl"),
+        )
+
+    if "llvm20_windows_x86_64" not in native.existing_rules():
+        # LLVM 20 Windows x86_64 (MSVC)
+        mirrored_http_archive(
+            name = "llvm20_windows_x86_64",
+            urls = tf_mirror_urls("https://github.com/miinso/flang-releases/releases/download/v20.1.8/flang+llvm-20.1.8-x86_64-pc-windows-msvc.zip"),
+            sha256 = "c1ad08683754beb2dea7702230346d526adb0fa3c8b7ab9d967d3b526b25cedb",
+            build_file = Label("//common/config:llvm20_windows_x86_64.BUILD"),
+            strip_prefix = "flang+llvm-20.1.8",
+        )
+
+    if "llvm21_windows_x86_64" not in native.existing_rules():
+        # LLVM 21 Windows x86_64 (MSVC)
+        mirrored_http_archive(
+            name = "llvm21_windows_x86_64",
+            urls = tf_mirror_urls("https://github.com/miinso/flang-releases/releases/download/v21.1.8/flang+llvm-21.1.8-x86_64-pc-windows-msvc.zip"),
+            sha256 = "b25e8c506e1b1851d2b80518205a7a750e0363408919566e90b4ff7b8b367e6c",
+            build_file = Label("//common/config:llvm21_windows_x86_64.BUILD"),
+            strip_prefix = "flang+llvm-21.1.8",
+        )
+
+    if "llvm22_windows_x86_64" not in native.existing_rules():
+        # LLVM 22 Windows x86_64 (MSVC)
+        mirrored_http_archive(
+            name = "llvm22_windows_x86_64",
+            urls = tf_mirror_urls("https://github.com/miinso/flang-releases/releases/download/v22.1.0/flang+llvm-22.1.0-x86_64-pc-windows-msvc.zip"),
+            sha256 = "9693475278561c5d54a9bbb4dade80ad1f88c0efeb2a08503a64f63b8d847dba",
+            build_file = Label("//common/config:llvm22_windows_x86_64.BUILD"),
+            strip_prefix = "flang+llvm-22.1.0",
+        )
+

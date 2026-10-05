@@ -110,3 +110,23 @@ toolchain(
     toolchain = "//fortran/impls/darwin_aarch64_darwin_aarch64:toolchain",
     toolchain_type = ":toolchain_type",
 )
+
+#=====================================================================
+# Executor platform: Windows x86_64
+#=====================================================================
+
+# Target platform: Windows x86_64
+toolchain(
+    name = "windows_x86_64_windows_x86_64",
+    exec_compatible_with = [
+        "@platforms//cpu:x86_64",
+        "@platforms//os:windows",
+    ],
+    target_compatible_with = [
+        "@platforms//cpu:x86_64",
+        "@platforms//os:windows",
+    ],
+    toolchain = "//fortran/impls/windows_x86_64_windows_x86_64:toolchain",
+    toolchain_type = ":toolchain_type",
+)
+

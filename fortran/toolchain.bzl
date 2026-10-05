@@ -204,36 +204,44 @@ def _fortran_toolchain_impl(ctx):
         unsupported_features = ctx.disabled_features,
     )
 
-    link_variables = cc_common.create_link_variables(
-        feature_configuration = cc_feature_configuration,
-        cc_toolchain = cc_toolchain,
-        is_using_linker = True,
-        is_linking_dynamic_library = False,
-    )
-    cc_link_flags = cc_common.get_memory_inefficient_command_line(
-        feature_configuration = cc_feature_configuration,
-        action_name = ACTION_NAMES.cpp_link_executable,
-        variables = link_variables,
-    )
-
+    is_windows_msvc = "windows" in target or "msvc" in target or cc_toolchain.compiler == "msvc-cl"
     linker_flags = []
-    for flag in cc_link_flags:
-        for part in flag.split(" "):
-            if part:
-                linker_flags.append(part)
-    for flag in ctx.attr.linker_flags:
-        for part in flag.split(" "):
-            if part:
-                linker_flags.append(part)
+    if is_windows_msvc:
+        for flag in raw_linker_flags:
+            for part in flag.split(" "):
+                if part:
+                    linker_flags.append(part)
+    else:
+        link_variables = cc_common.create_link_variables(
+            feature_configuration = cc_feature_configuration,
+            cc_toolchain = cc_toolchain,
+            is_using_linker = True,
+            is_linking_dynamic_library = False,
+        )
+        cc_link_flags = cc_common.get_memory_inefficient_command_line(
+            feature_configuration = cc_feature_configuration,
+            action_name = ACTION_NAMES.cpp_link_executable,
+            variables = link_variables,
+        )
+        for flag in cc_link_flags:
+            for part in flag.split(" "):
+                if part:
+                    linker_flags.append(part)
+        for flag in ctx.attr.linker_flags:
+            for part in flag.split(" "):
+                if part:
+                    linker_flags.append(part)
 
     archiver = ctx.file.archiver
     linker = ctx.file.linker
     if not archiver or not linker:
         for f in cc_toolchain.all_files.to_list():
-            if not archiver and f.path.endswith("/bin/llvm-ar"):
+            if not archiver and (f.path.endswith("/bin/llvm-ar") or f.path.endswith("/bin/llvm-ar.exe")):
                 archiver = f
-            elif not linker and f.path.endswith("/bin/clang++"):
+            elif not linker and (f.path.endswith("/bin/clang++") or f.path.endswith("/bin/clang++.exe")):
                 linker = f
+        if not linker:
+            linker = flang_bin
 
     runtime_ccinfo = _make_runtime_ccinfo(
         ctx = ctx,
