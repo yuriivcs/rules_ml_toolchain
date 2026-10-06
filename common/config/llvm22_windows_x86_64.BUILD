@@ -93,7 +93,10 @@ cc_toolchain_import(
 filegroup(
     name = "flang",
     srcs = glob(
-        ["bin/flang-new.exe"],
+        [
+            "bin/flang.exe",
+            "bin/flang-new.exe",
+        ],
         allow_empty = True,
     ),
     visibility = ["//visibility:public"],

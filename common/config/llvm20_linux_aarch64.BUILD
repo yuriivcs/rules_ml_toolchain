@@ -222,6 +222,7 @@ cc_library(
 filegroup(
     name = "flang",
     srcs = [
+        "bin/flang",
         "bin/flang-new",
     ],
     visibility = ["//visibility:public"],

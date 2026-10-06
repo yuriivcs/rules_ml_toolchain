@@ -232,8 +232,10 @@ def _fortran_toolchain_impl(ctx):
                 if part:
                     linker_flags.append(part)
 
-    archiver = ctx.file.archiver
-    linker = ctx.file.linker
+    archiver_files = ctx.files.archiver
+    linker_files = ctx.files.linker
+    archiver = archiver_files[0] if archiver_files else None
+    linker = linker_files[0] if linker_files else None
     if not archiver or not linker:
         for f in cc_toolchain.all_files.to_list():
             if not archiver and (f.path.endswith("/bin/llvm-ar") or f.path.endswith("/bin/llvm-ar.exe")):
@@ -253,7 +255,7 @@ def _fortran_toolchain_impl(ctx):
     runtime_libraries = fortran_main.to_list() + fortran_libs.to_list()
 
     all_files = depset(
-        direct = [f for f in [flang_bin, linker, archiver] if f],
+        direct = [f for f in [flang_bin, linker, archiver] if f] + archiver_files + linker_files,
         transitive = [
             compiler_files,
             fortran_libs,
@@ -301,12 +303,12 @@ fortran_toolchain = rule(
         ),
         "archiver": attr.label(
             doc = "Optional archiver executable (defaults to llvm-ar from the C++ toolchain).",
-            allow_single_file = True,
+            allow_files = True,
             cfg = "exec",
         ),
         "linker": attr.label(
             doc = "Optional linker executable (defaults to clang++ from the C++ toolchain).",
-            allow_single_file = True,
+            allow_files = True,
             cfg = "exec",
         ),
         "compiler_files": attr.label(

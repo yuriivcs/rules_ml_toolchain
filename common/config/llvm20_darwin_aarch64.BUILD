@@ -117,7 +117,10 @@ cc_toolchain_import(
 filegroup(
     name = "flang",
     srcs = glob(
-        ["bin/flang-new"],
+        [
+            "bin/flang",
+            "bin/flang-new",
+        ],
         allow_empty = True,
     ),
     visibility = ["//visibility:public"],
