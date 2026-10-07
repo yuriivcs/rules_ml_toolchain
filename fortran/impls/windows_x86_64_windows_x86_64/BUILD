@@ -62,7 +62,6 @@ fortran_toolchain(
         "//fortran/features:fastbuild",
         "//fortran/features:opt",
         "//fortran/features/windows/x86_64:sysroot",
-        "//fortran/features:use_lld",
     ],
     compiler_files = ":compiler",
     flang = "@llvm_windows_x86_64//:flang",
