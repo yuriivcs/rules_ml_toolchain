@@ -24,6 +24,7 @@ FortranToolchainInfo = provider(
         "archiver": "The archiver executable (ar)",
         "compiler": "The Fortran compiler executable",
         "compiler_flags": "Default compiler flags",
+        "link_env": "Environment variables for linker execution",
         "linker": "The linker executable",
         "linker_flags": "Default linker flags",
         "module_flag_format": "Format string for module path flag (e.g., '-J{}', '-module {}')",

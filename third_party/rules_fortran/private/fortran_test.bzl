@@ -129,6 +129,7 @@ def _fortran_test_impl(ctx):
         outputs = [executable],
         mnemonic = "FortranLinkTest",
         progress_message = "Linking Fortran test {}".format(executable.short_path),
+        env = getattr(toolchain, "link_env", {}),
         use_default_shell_env = True,
     )
 

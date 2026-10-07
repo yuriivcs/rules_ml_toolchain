@@ -53,6 +53,18 @@ filegroup(
 )
 
 filegroup(
+    name = "lld",
+    srcs = glob(
+        [
+            "bin/lld-link.exe",
+            "bin/lld.exe",
+        ],
+        allow_empty = True,
+    ),
+    visibility = ["//visibility:public"],
+)
+
+filegroup(
     name = "distro_libs",
     srcs = glob(
         ["bin/*.dll"],

@@ -44,6 +44,12 @@ alias(
 )
 
 alias(
+    name = "lld",
+    actual = "@@%{llvm_repo_name}//:lld",
+    visibility = ["//visibility:public"],
+)
+
+alias(
     name = "distro_libs",
     actual = "@@%{llvm_repo_name}//:distro_libs",
     visibility = ["//visibility:public"],

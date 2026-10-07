@@ -46,6 +46,7 @@ filegroup(
         "@llvm_windows_x86_64//:distro_libs",
         "@llvm_windows_x86_64//:flang",
         "@llvm_windows_x86_64//:flang_incs",
+        "@llvm_windows_x86_64//:lld",
     ],
 )
 

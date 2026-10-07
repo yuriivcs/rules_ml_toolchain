@@ -204,34 +204,6 @@ def _fortran_toolchain_impl(ctx):
         unsupported_features = ctx.disabled_features,
     )
 
-    is_windows_msvc = "windows" in target or "msvc" in target or cc_toolchain.compiler == "msvc-cl"
-    linker_flags = []
-    if is_windows_msvc:
-        for flag in raw_linker_flags:
-            for part in flag.split(" "):
-                if part:
-                    linker_flags.append(part)
-    else:
-        link_variables = cc_common.create_link_variables(
-            feature_configuration = cc_feature_configuration,
-            cc_toolchain = cc_toolchain,
-            is_using_linker = True,
-            is_linking_dynamic_library = False,
-        )
-        cc_link_flags = cc_common.get_memory_inefficient_command_line(
-            feature_configuration = cc_feature_configuration,
-            action_name = ACTION_NAMES.cpp_link_executable,
-            variables = link_variables,
-        )
-        for flag in cc_link_flags:
-            for part in flag.split(" "):
-                if part:
-                    linker_flags.append(part)
-        for flag in ctx.attr.linker_flags:
-            for part in flag.split(" "):
-                if part:
-                    linker_flags.append(part)
-
     archiver_files = ctx.files.archiver
     linker_files = ctx.files.linker
     archiver = archiver_files[0] if archiver_files else None
@@ -244,6 +216,41 @@ def _fortran_toolchain_impl(ctx):
                 linker = f
         if not linker:
             linker = flang_bin
+
+    link_variables = cc_common.create_link_variables(
+        feature_configuration = cc_feature_configuration,
+        cc_toolchain = cc_toolchain,
+        is_using_linker = True,
+        is_linking_dynamic_library = False,
+    )
+    link_env = cc_common.get_environment_variables(
+        feature_configuration = cc_feature_configuration,
+        action_name = ACTION_NAMES.cpp_link_executable,
+        variables = link_variables,
+    )
+
+    is_windows_msvc = "windows" in target or "msvc" in target or cc_toolchain.compiler == "msvc-cl"
+    is_flang_linker = linker and ("flang" in linker.basename)
+    linker_flags = []
+    if is_windows_msvc:
+        for flag in raw_linker_flags:
+            for part in flag.split(" "):
+                if part and not (is_flang_linker and part in _FLANG_UNSUPPORTED_COMPILE_FLAGS):
+                    linker_flags.append(part)
+    else:
+        cc_link_flags = cc_common.get_memory_inefficient_command_line(
+            feature_configuration = cc_feature_configuration,
+            action_name = ACTION_NAMES.cpp_link_executable,
+            variables = link_variables,
+        )
+        for flag in cc_link_flags:
+            for part in flag.split(" "):
+                if part and not (is_flang_linker and part in _FLANG_UNSUPPORTED_COMPILE_FLAGS):
+                    linker_flags.append(part)
+        for flag in ctx.attr.linker_flags:
+            for part in flag.split(" "):
+                if part and not (is_flang_linker and part in _FLANG_UNSUPPORTED_COMPILE_FLAGS):
+                    linker_flags.append(part)
 
     runtime_ccinfo = _make_runtime_ccinfo(
         ctx = ctx,
@@ -267,6 +274,7 @@ def _fortran_toolchain_impl(ctx):
     toolchain_info = FortranToolchainInfo(
         compiler = flang_bin,
         linker = linker,
+        link_env = link_env,
         archiver = archiver,
         compiler_flags = compiler_flags,
         linker_flags = linker_flags,

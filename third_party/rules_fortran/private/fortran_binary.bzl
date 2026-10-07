@@ -129,6 +129,7 @@ def _fortran_binary_impl(ctx):
         outputs = [executable],
         mnemonic = "FortranLink",
         progress_message = "Linking Fortran binary {}".format(executable.short_path),
+        env = getattr(toolchain, "link_env", {}),
         use_default_shell_env = True,
     )
 
