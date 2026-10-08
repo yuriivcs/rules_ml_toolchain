@@ -94,8 +94,8 @@ filegroup(
 cc_toolchain_import(
     name = "compiler_incs",
     hdrs = glob([
-        "lib/clang/*/include/*.h",
-        "lib/clang/*/include/**/*.h",
+        "lib/clang/{clang_version}/include/*.h".format(clang_version = CLANG_VERSION),
+        "lib/clang/{clang_version}/include/**/*.h".format(clang_version = CLANG_VERSION),
     ]),
     includes = [
         "lib/clang/{clang_version}".format(clang_version = CLANG_VERSION),
