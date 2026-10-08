@@ -22,7 +22,7 @@ load("//common:mirrored_http_archive.bzl", "mirrored_http_archive")
 load("//common:repo.bzl", "tf_mirror_urls")
 load("//common:tar_extraction_utils.bzl", "tool_archive")
 
-def cc_toolchain_deps():
+def toolchain_deps():
     tool_archive(
         name = "tar",
         linux_x86_64_sha256 = "d3be6744685d7a90adc16e3d5342ba9b28fc388422629a1bea146b3798229af6",
