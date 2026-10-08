@@ -539,9 +539,9 @@ def cc_toolchain_deps():
 
     if "llvm22_windows_x86_64" not in native.existing_rules():
         # LLVM 22 Windows x86_64 (MSVC)
-        mirrored_http_archive(
+        http_archive(
             name = "llvm22_windows_x86_64",
-            urls = tf_mirror_urls("https://storage.googleapis.com/ml-sysroot-testing/llvm/x64-win/LLVM-22.1.8-win64.zip"),
+            urls = ["https://storage.googleapis.com/ml-sysroot-testing/llvm/x64-win/LLVM-22.1.8-win64.zip"],
             sha256 = "62F0256488F3F75DB9EE0A8C30969BAEDA4C6B206EF58C236B74CED958B992D4",
             build_file = Label("//common/config:llvm22_windows_x86_64.BUILD"),
             strip_prefix = "LLVM-22.1.8-win64",
