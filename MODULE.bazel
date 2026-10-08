@@ -164,9 +164,7 @@ use_repo(
     "llvm19_linux_x86_64",
     "llvm20_linux_aarch64",
     "llvm20_linux_x86_64",
-    "llvm20_windows_x86_64",
     "llvm21_linux_x86_64",
-    "llvm21_windows_x86_64",
     "llvm22_windows_x86_64",
     "llvm_darwin_aarch64",
     "llvm_linux_aarch64",
@@ -195,4 +193,3 @@ register_toolchains(
     "//fortran/...",
     dev_dependency = True,
 )
-
