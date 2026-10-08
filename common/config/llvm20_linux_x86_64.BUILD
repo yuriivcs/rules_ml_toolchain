@@ -220,6 +220,7 @@ filegroup(
     name = "flang",
     srcs = [
         "bin/flang",
+        "bin/flang-20",
         "bin/flang-new",
     ],
     visibility = ["//visibility:public"],
