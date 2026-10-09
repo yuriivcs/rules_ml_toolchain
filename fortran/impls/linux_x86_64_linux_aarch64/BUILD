@@ -46,8 +46,10 @@ filegroup(
         ":imports",
         "@llvm_linux_aarch64//:flang_incs",
         "@llvm_linux_x86_64//:ar",
+        "@llvm_linux_x86_64//:clang++",
         "@llvm_linux_x86_64//:distro_libs",
         "@llvm_linux_x86_64//:flang",
+        "@llvm_linux_x86_64//:ld",
     ],
 )
 
@@ -73,6 +75,7 @@ fortran_toolchain(
     flang_incs = "@llvm_linux_aarch64//:flang_incs",
     fortran_libs = "@llvm_linux_aarch64//:fortran_libs",
     fortran_main = "@llvm_linux_aarch64//:fortran_main",
+    linker = "@llvm_linux_x86_64//:clang++",
     sysroot = "@sysroot_linux_aarch64//:sysroot",
     target = "aarch64-linux-gnu",
     target_cpu = "aarch64",

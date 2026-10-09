@@ -45,9 +45,11 @@ filegroup(
     srcs = [
         ":imports",
         "@llvm_darwin_aarch64//:ar",
+        "@llvm_darwin_aarch64//:clang++",
         "@llvm_darwin_aarch64//:distro_libs",
         "@llvm_darwin_aarch64//:flang",
         "@llvm_darwin_aarch64//:flang_incs",
+        "@llvm_darwin_aarch64//:ld",
     ],
 )
 
@@ -74,6 +76,7 @@ fortran_toolchain(
     flang_incs = "@llvm_darwin_aarch64//:flang_incs",
     fortran_libs = "@llvm_darwin_aarch64//:fortran_libs",
     fortran_main = "@llvm_darwin_aarch64//:fortran_main",
+    linker = "@llvm_darwin_aarch64//:clang++",
     sysroot = "@sysroot_darwin_aarch64//:sysroot",
     # Use the lowest macOS arm64 version supported by LLVM 22 for maximal compatibility
     # Use flag --macos_minimum_os for overriding this.

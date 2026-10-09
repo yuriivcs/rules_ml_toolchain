@@ -49,7 +49,11 @@ def compile_fortran(ctx, toolchain, src, module_map, copts, defines = [], includ
 
     # Compiler flags
     args.add_all(toolchain.compiler_flags)
-    args.add_all(copts)
+    is_pre_llvm20 = toolchain.compiler and ("llvm18" in toolchain.compiler.path or "llvm19" in toolchain.compiler.path)
+    for flag in copts:
+        if is_pre_llvm20 and flag == "-w":
+            continue
+        args.add(flag)
 
     # Free-form or fixed-form
     if _is_free_form(src):
