@@ -41,6 +41,7 @@ package(
         "//cc/impls/linux_x86_64_linux_x86_64_cuda:__pkg__",
         "//cc/impls/linux_x86_64_linux_x86_64_rocm:__pkg__",
         "//cc/impls/linux_x86_64_linux_x86_64_sycl:__pkg__",
+        "@darwin_local_config_cc//:__pkg__",
     ],
 )
 
@@ -101,20 +102,9 @@ cc_feature(
     enabled = True,
 )
 
-cc_feature(
-    name = "language",
-    c_flags = [
-        "-xc",
-    ],
-    cc_flags = [
-        "-xc++",
-    ],
-    enabled = True,
-)
-
 # Hermetic includes.
 cc_feature(
-    name = "hermetic_libraries",
+    name = "hermetic",
     cc_flags = ["-nostdinc++"],
     compiler_flags = ["-nostdinc"],
     enabled = True,

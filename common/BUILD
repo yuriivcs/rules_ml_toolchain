@@ -93,6 +93,15 @@ config_setting(
     visibility = ["//visibility:public"],
 )
 
+config_setting(
+    name = "is_macos_aarch64",
+    constraint_values = [
+        "@platforms//os:macos",
+        "@platforms//cpu:aarch64",
+    ],
+    visibility = ["//visibility:public"],
+)
+
 #######################################################
 # Hermetic C++ flags
 
@@ -105,6 +114,18 @@ config_setting(
     name = "is_hermetic_cc_enabled",
     flag_values = {
         ":enable_hermetic_cc": "True",
+    },
+)
+
+bool_flag(
+    name = "enable_hermetic_libraries",
+    build_setting_default = False,
+)
+
+config_setting(
+    name = "is_hermetic_libraries_enabled",
+    flag_values = {
+        ":enable_hermetic_libraries": "True",
     },
 )
 
@@ -128,7 +149,7 @@ bool_flag(
 config_setting(
     name = "is_static_libcxx",
     flag_values = {
-        ":static_libcxx": "True"
+        ":static_libcxx": "True",
     },
 )
 
@@ -179,7 +200,7 @@ config_setting(
     name = "enable_cuda_rpath",
     flag_values = {
         ":cuda_rpath": "True",
-        "@local_config_cuda//:enable_cuda": "True"
+        "@local_config_cuda//:enable_cuda": "True",
     },
 )
 
@@ -195,7 +216,6 @@ config_setting(
         ":link_cuda_static_libs": "True",
     },
 )
-
 
 # Flag for linking static CUDA NVRTC libs
 bool_flag(
@@ -250,6 +270,13 @@ config_setting(
 
 bool_flag(
     name = "enable_rocm",
+    build_setting_default = False,
+)
+
+# Enable XLA_TEST global symbol versioning
+# Prevents LLVM symbol clashes between XLA's LLVM and ROCm's libLLVM.so
+bool_flag(
+    name = "enable_xla_test_global_symbol_version",
     build_setting_default = False,
 )
 

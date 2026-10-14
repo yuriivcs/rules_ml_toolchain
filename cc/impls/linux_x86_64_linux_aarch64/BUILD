@@ -17,6 +17,9 @@
 # Tools: Linux x86_64, Sysroot: Linux aarch64
 # ==============================================================================
 
+load("@rules_cc//cc:defs.bzl", "cc_toolchain")
+load("//cc/config:constants.bzl", "LIBCXX_FLAGS")
+load("//cc/layering_check:build_defs.bzl", "cc_toolchain_with_cppmap")
 load("//third_party/rules_cc_toolchain:toolchain_config.bzl", "cc_toolchain_config")
 load("//third_party/rules_cc_toolchain/features:cc_toolchain_import.bzl", "cc_toolchain_import")
 load("//third_party/rules_cc_toolchain/features:features.bzl", "cc_toolchain_import_feature")
@@ -47,15 +50,33 @@ cc_toolchain_import_feature(
     toolchain_import = ":startup_libs",
 )
 
+alias(
+    name = "std_incs",
+    actual = select({
+        "//common:is_stdlib_libcxx": "@llvm_linux_aarch64//:std_incs",
+        "//conditions:default": "@sysroot_linux_aarch64//:std_incs",
+    }),
+)
+
+alias(
+    name = "std_libs",
+    actual = select({
+        "//common:is_stdlib_libcxx": "@llvm_linux_aarch64//:std_libs",
+        "//conditions:default": "@sysroot_linux_aarch64//:std_libs",
+    }),
+)
+
 # buildifier: leave-alone
 cc_toolchain_import(
     name = "imports",
     deps = [
-        "@sysroot_linux_aarch64//:std_incs",
+        ":std_incs",
         "@llvm_linux_x86_64//:compiler_incs",
         "@sysroot_linux_aarch64//:sys_incs",
         "@sysroot_linux_aarch64//:sys_libs",
-        "@sysroot_linux_aarch64//:std_libs",
+        ":std_libs",
+        "@sysroot_linux_aarch64//:openmp",
+        "@llvm_linux_aarch64//:libclang_rt",
     ],
     visibility = ["//visibility:public"],
 )
@@ -63,6 +84,10 @@ cc_toolchain_import(
 cc_toolchain_import_feature(
     name = "imports_feature",
     enabled = True,
+    static_link_flags = select({
+        "//common:is_static_libcxx": LIBCXX_FLAGS,
+        "//conditions:default": [],
+    }),
     toolchain_import = ":imports",
 )
 
@@ -81,10 +106,11 @@ filegroup(
 filegroup(
     name = "compiler",
     srcs = [
-        ":all",
+        ":imports",
         ":wrappers",
         "@llvm_linux_x86_64//:clang",
         "@llvm_linux_x86_64//:clang++",
+        "@llvm_linux_x86_64//:scan_deps",
         "@llvm_linux_x86_64//:distro_libs",
         "@llvm_linux_x86_64//:asan_ignorelist",
     ],
@@ -132,58 +158,73 @@ filegroup(
     ],
 )
 
+FEATURES_ESSENTIAL = [
+    "//cc/features:dependency_file",
+    "//cc/features:include_paths",
+    "//cc/features:external_include_paths",
+    "//third_party/rules_cc_toolchain/features:hermetic",  # Hermetic libraries feature required before import
+    ":imports_feature",
+
+    # C++ modules
+    "//cc/features:cpp_modules",
+    "//cc/features:cpp_module_modmap_file",
+    "//cc/features:cpp20_module_compile_flags",
+    "//cc/features:random_seed",
+
+    # Toolchain configuration
+    "//third_party/rules_cc_toolchain/features:warnings",
+    "//third_party/rules_cc_toolchain/features:errors",
+    "//third_party/rules_cc_toolchain/features:reproducible",
+    "//cc/features:language",
+    "//third_party/rules_cc_toolchain/features:use_lld",
+    ":startup_libs_feature",
+    "//third_party/rules_cc_toolchain/features:coverage",
+    #"//cc/features:clang19",    # TODO: Add a selection mechanism based on the Clang version
+
+    # PIC / PIE flags
+    "//third_party/rules_cc_toolchain/features:supports_pic",
+    "//third_party/rules_cc_toolchain/features:position_independent_code",
+    "//third_party/rules_cc_toolchain/features:position_independent_executable",
+
+    # Optimization flags
+    "//third_party/rules_cc_toolchain/features:garbage_collect_symbols",
+    "//cc/features:constants_merge",
+    "//cc/features:dbg",
+    "//cc/features:fastbuild",
+    "//cc/features:opt",
+    "//cc/features:detect_issues",
+    "//cc/features:detect_issues_ext",
+
+    # C++ standard flags
+    "//third_party/rules_cc_toolchain/features:c++11",
+    "//third_party/rules_cc_toolchain/features:c++14",
+    "//third_party/rules_cc_toolchain/features:c++17",
+    "//third_party/rules_cc_toolchain/features:c++20",
+
+    # Other flags
+    "//cc/features:allow_shlib_undefined",
+    "//cc/features:supports_dynamic_linker",
+    "//cc/features:supports_start_end_lib_feature",
+    "//cc/features/linux/aarch64:sysroot",
+    "//cc/features:compiler_input_flags",
+    "//cc/features:compiler_output_flags",
+]
+
 cc_toolchain_config(
     name = "config",
     archiver = "@llvm_linux_x86_64//:ar",
     c_compiler = "@llvm_linux_x86_64//:clang",
     cc_compiler = "@llvm_linux_x86_64//:clang++",
-    compiler_features = [
-        # Hermetic libraries feature required before import.
-        "//third_party/rules_cc_toolchain/features:hermetic_libraries",
-        ":imports_feature",
-
-        # Toolchain configuration
-        "//third_party/rules_cc_toolchain/features:warnings",
-        "//third_party/rules_cc_toolchain/features:errors",
-        "//third_party/rules_cc_toolchain/features:reproducible",
-        "//third_party/rules_cc_toolchain/features:language",
-        "//third_party/rules_cc_toolchain/features:use_lld",
-        "//cc/features:sysroot_linux_aarch64",
-        ":startup_libs_feature",
-        "//third_party/rules_cc_toolchain/features:coverage",
-        #"//cc/features:clang19",    # TODO: Add a selection mechanism based on the Clang version
-
-        # PIC / PIE flags
-        "//third_party/rules_cc_toolchain/features:supports_pic",
-        "//third_party/rules_cc_toolchain/features:position_independent_code",
-        "//third_party/rules_cc_toolchain/features:position_independent_executable",
-
-        # Optimization flags
-        "//third_party/rules_cc_toolchain/features:garbage_collect_symbols",
-        "//cc/features:constants_merge",
-        "//cc/features:dbg",
-        "//cc/features:fastbuild",
-        "//cc/features:opt",
-        "//cc/features:detect_issues",
-        "//cc/features:detect_issues_ext",
-
-        # C++ standard configuration
-        "//third_party/rules_cc_toolchain/features:c++11",
-        "//third_party/rules_cc_toolchain/features:c++14",
-        "//third_party/rules_cc_toolchain/features:c++17",
-
-        #
-        "//cc/features:allow_shlib_undefined",
-        "//cc/features:supports_dynamic_linker",
-        "//cc/features:supports_start_end_lib_feature",
-    ],
+    compiler_features = FEATURES_ESSENTIAL,
+    headers_parser = "@llvm_linux_x86_64//:clang",
     linker = "@llvm_linux_x86_64//:ld",
+    module_deps_scanner = "@llvm_linux_x86_64//:scan_deps",
     strip_tool = "@llvm_linux_x86_64//:strip",
     target_cpu = "aarch64",
     target_system_name = "local",
 )
 
-cc_toolchain(
+cc_toolchain_with_cppmap(
     name = "toolchain",
     all_files = ":all",
     ar_files = ":ar",
@@ -194,5 +235,5 @@ cc_toolchain(
     strip_files = ":strip",
     supports_param_files = 1,
     toolchain_config = ":config",
-    toolchain_identifier = "toolchain_id_linux_x86_64_linux_aarch64",
+    toolchain_identifier = "toolchain_id_linux_x86_64_linux_aarch64_id",
 )

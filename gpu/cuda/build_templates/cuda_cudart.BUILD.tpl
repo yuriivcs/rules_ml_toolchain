@@ -1,3 +1,5 @@
+load("@rules_cc//cc:defs.bzl", "cc_import", "cc_library")
+
 licenses(["restricted"])  # NVIDIA proprietary license
 load(
      "@local_config_cuda//cuda:build_defs.bzl",
@@ -83,6 +85,7 @@ filegroup(
         %{comment}"include/common_functions.h",
         %{comment}"include/cooperative_groups/**",
         %{comment}"include/cooperative_groups.h",
+        %{comment}"include/crt/**",
         %{comment}"include/cuComplex.h",
         %{comment}"include/cuda.h",
         %{comment}"include/cudaEGL.h",
@@ -159,7 +162,8 @@ filegroup(
         %{comment}"include/vector_functions.h",
         %{comment}"include/vector_functions.hpp",
         %{comment}"include/vector_types.h",
-    %{comment}]),
+    %{comment}],
+    %{comment}allow_empty = True),
     visibility = ["@local_config_cuda//cuda:__pkg__"],
 )
 

@@ -17,11 +17,14 @@
 # Tools: Linux x86_64, Sysroot: Linux x86_64
 # ==============================================================================
 
+load("@rules_cc//cc:defs.bzl", "cc_toolchain")
 load("//cc/config:constants.bzl", "LIBCXX_FLAGS")
 load("//cc/layering_check:build_defs.bzl", "cc_toolchain_with_cppmap")
-load("//cc/sanitizers:features.bzl",
+load(
+    "//cc/sanitizers:features.bzl",
     "cc_toolchain_import_asan_feature",
-    "cc_toolchain_import_tsan_feature")
+    "cc_toolchain_import_tsan_feature",
+)
 load("//third_party/rules_cc_toolchain:toolchain_config.bzl", "cc_toolchain_config")
 load("//third_party/rules_cc_toolchain/features:cc_toolchain_import.bzl", "cc_toolchain_import")
 load("//third_party/rules_cc_toolchain/features:features.bzl", "cc_toolchain_import_feature")
@@ -40,32 +43,26 @@ filegroup(
     visibility = ["//visibility:public"],
 )
 
-alias(
-    name = "startup_libs",
-    actual = "@sysroot_linux_x86_64//:startup_libs",
-    visibility = ["//visibility:public"],
-)
-
 cc_toolchain_import_feature(
     name = "startup_libs_feature",
     enabled = True,
-    toolchain_import = ":startup_libs",
+    toolchain_import = "@sysroot_linux_x86_64//:startup_libs",
 )
 
 alias(
     name = "std_incs",
     actual = select({
-        "//common:is_stdlib_libcxx": "@llvm_linux_x86_64//:std_incs" ,
+        "//common:is_stdlib_libcxx": "@llvm_linux_x86_64//:std_incs",
         "//conditions:default": "@sysroot_linux_x86_64//:std_incs",
-    })
+    }),
 )
 
 alias(
     name = "std_libs",
     actual = select({
-        "//common:is_stdlib_libcxx": "@llvm_linux_x86_64//:std_libs" ,
+        "//common:is_stdlib_libcxx": "@llvm_linux_x86_64//:std_libs",
         "//conditions:default": "@sysroot_linux_x86_64//:std_libs",
-    })
+    }),
 )
 
 # buildifier: leave-alone
@@ -86,11 +83,11 @@ cc_toolchain_import(
 cc_toolchain_import_feature(
     name = "imports_feature",
     enabled = True,
-    toolchain_import = ":imports",
     static_link_flags = select({
         "//common:is_static_libcxx": LIBCXX_FLAGS,
         "//conditions:default": [],
     }),
+    toolchain_import = ":imports",
 )
 
 cc_toolchain_import(
@@ -125,7 +122,7 @@ filegroup(
     srcs = [
         ":imports",
         ":wrappers",
-        ":startup_libs",
+        "@sysroot_linux_x86_64//:startup_libs",
         "@llvm_linux_x86_64//:all",
     ],
 )
@@ -140,6 +137,7 @@ filegroup(
         ":wrappers",
         "@llvm_linux_x86_64//:clang",
         "@llvm_linux_x86_64//:clang++",
+        "@llvm_linux_x86_64//:scan_deps",
         "@llvm_linux_x86_64//:distro_libs",
         "@llvm_linux_x86_64//:asan_ignorelist",
     ],
@@ -188,16 +186,24 @@ filegroup(
 )
 
 FEATURES_ESSENTIAL = [
-    "//third_party/rules_cc_toolchain/features:hermetic_libraries",  # Hermetic libraries feature required before import
+    "//cc/features:dependency_file",
+    "//cc/features:include_paths",
+    "//cc/features:external_include_paths",
+    "//third_party/rules_cc_toolchain/features:hermetic",  # Hermetic libraries feature required before import
     ":imports_feature",
+
+    # C++ modules
+    "//cc/features:cpp_modules",
+    "//cc/features:cpp_module_modmap_file",
+    "//cc/features:cpp20_module_compile_flags",
+    "//cc/features:random_seed",
 
     # Toolchain configuration
     "//third_party/rules_cc_toolchain/features:warnings",
     "//third_party/rules_cc_toolchain/features:errors",
     "//third_party/rules_cc_toolchain/features:reproducible",
-    "//third_party/rules_cc_toolchain/features:language",
+    "//cc/features:language",
     "//third_party/rules_cc_toolchain/features:use_lld",
-    "//cc/features:sysroot_linux_x86_64",
     ":startup_libs_feature",
     "//third_party/rules_cc_toolchain/features:coverage",
     #"//cc/features:clang19",    # TODO: Add a selection mechanism based on the Clang version
@@ -220,6 +226,7 @@ FEATURES_ESSENTIAL = [
     "//third_party/rules_cc_toolchain/features:c++11",
     "//third_party/rules_cc_toolchain/features:c++14",
     "//third_party/rules_cc_toolchain/features:c++17",
+    "//third_party/rules_cc_toolchain/features:c++20",
 
     # Other flags
     "//cc/features:allow_shlib_undefined",
@@ -229,6 +236,9 @@ FEATURES_ESSENTIAL = [
     # Sanitizers
     ":asan",
     ":tsan",
+    "//cc/features/linux/x86_64:sysroot",
+    "//cc/features:compiler_input_flags",
+    "//cc/features:compiler_output_flags",
 ] + select({
     "//common:is_stdlib_libcxx": [
         "//cc/features:libc++",
@@ -242,7 +252,9 @@ cc_toolchain_config(
     c_compiler = "@llvm_linux_x86_64//:clang",
     cc_compiler = "@llvm_linux_x86_64//:clang++",
     compiler_features = FEATURES_ESSENTIAL,
+    headers_parser = "@llvm_linux_x86_64//:clang",
     linker = "@llvm_linux_x86_64//:ld",
+    module_deps_scanner = "@llvm_linux_x86_64//:scan_deps",
     strip_tool = "@llvm_linux_x86_64//:strip",
     target_cpu = "x86_64",
     target_system_name = "local",

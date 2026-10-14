@@ -1,5 +1,3 @@
-load("@local_sysroot_config//:defs.bzl", "local_sysroot_info")
-
 # Copyright 2026 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,10 +19,11 @@ load("@local_sysroot_config//:defs.bzl", "local_sysroot_info")
 
 load("@config_rocm_hipcc//rocm:build_defs.bzl", "hipcc_config")
 load("@rules_cc//cc:defs.bzl", "cc_toolchain")
+load("//cc/config:constants.bzl", "LIBCXX_FLAGS", "LIBSTDCXX_FLAGS")
 load("//cc/rocm/features:rocm_hipcc_feature.bzl", "rocm_hipcc_feature")
 load("//third_party/rules_cc_toolchain:toolchain_config.bzl", "cc_toolchain_config")
 load("//third_party/rules_cc_toolchain/features:cc_toolchain_import.bzl", "cc_toolchain_import")
-load("//third_party/rules_cc_toolchain/features:features.bzl", "cc_toolchain_import_feature")
+load("//third_party/rules_cc_toolchain/features:features.bzl", "cc_feature", "cc_toolchain_import_feature")
 
 package(
     default_visibility = [
@@ -56,7 +55,7 @@ rocm_hipcc_feature(
     hipcc_path = hipcc_config().hipcc_path,
     host_compiler = "@llvm_linux_x86_64//:clang",
     rocm_path = hipcc_config().rocm_path,
-    rocm_toolkit = "@config_rocm_hipcc//rocm:rocm_root",
+    rocm_toolkit = "@config_rocm_hipcc//rocm:toolchain_data",
     version = str(hipcc_config().version_number),
     visibility = ["//visibility:public"],
 )
@@ -85,18 +84,16 @@ cc_toolchain_import(
 
 alias(
     name = "startup_libs",
-    actual = select({
-        # Local sysroot: startup libs via --sysroot flag
-        "//cc/sysroots:local_sysroot_enabled": ":empty_startup_libs",
-        # Hermetic sysroot: use hermetic startup libs
-        "//conditions:default": "@sysroot_linux_x86_64//:startup_libs",
-    }),
+    actual = "@sysroot_linux_x86_64//:startup_libs",
     visibility = ["//visibility:public"],
 )
 
 cc_toolchain_import_feature(
     name = "startup_libs_feature",
-    enabled = True,
+    enabled = select({
+        "//common:is_hermetic_libraries_enabled": True,
+        "//conditions:default": False,
+    }),
     toolchain_import = ":startup_libs",
 )
 
@@ -104,30 +101,72 @@ cc_toolchain_import_feature(
 cc_toolchain_import(
     name = "imports",
     deps = [
-        # Hermetic LLVM headers
-        "@llvm_linux_x86_64//:compiler_incs",
-        "@llvm_linux_x86_64//:libclang_rt",
         # Always include hermetic sysroot headers - needed for GPU compilation
         # GPU compilation requires hermetic headers (system headers incompatible with ROCm clang)
         # Host compilation will use system headers when HOST_SYSROOT is set (via wrapper override)
+        # IMPORTANT: std_incs must come before compiler_incs to ensure correct stdatomic.h resolution
+        # The sysroot C++ stdatomic.h wrapper uses #include_next to find clang's built-in stdatomic.h
         "@sysroot_linux_x86_64//:std_incs",
+        # Hermetic LLVM headers
+        "@llvm_linux_x86_64//:compiler_incs",
         "@sysroot_linux_x86_64//:sys_incs",
-    ] + select({
-        # Local sysroot: don't include hermetic libs (use system libs via --sysroot=/)
-        "//cc/sysroots:local_sysroot_enabled": [],
-        # Hermetic sysroot: use hermetic libs
-        "//conditions:default": [
-            "@sysroot_linux_x86_64//:std_libs",
-            "@sysroot_linux_x86_64//:sys_libs",
-        ],
-    }),
+        ":std_libs",
+        "@sysroot_linux_x86_64//:sys_libs",
+    ],
     visibility = ["//visibility:public"],
+)
+
+config_setting(
+    name = "is_static_libcxx",
+    flag_values = {
+        "//common:stdlib": "libc++",
+        "//common:static_libcxx": "True",
+    },
+)
+
+config_setting(
+    name = "is_static_libstdcxx",
+    flag_values = {
+        "//common:stdlib": "libstdc++",
+        "//common:static_libcxx": "True",
+    },
+)
+
+# Feature to force static linking of libstdc++
+# Use compiler's built-in flags for static linking
+cc_feature(
+    name = "static_link_libstdcxx",
+    enabled = select({
+        ":is_static_libstdcxx": True,
+        "//conditions:default": False,
+    }),
+    linker_flags = [
+        "-static-libstdc++",
+        "-static-libgcc",
+    ],
 )
 
 cc_toolchain_import_feature(
     name = "imports_feature",
     enabled = True,
     toolchain_import = ":imports",
+)
+
+# Conditional hermetic libraries feature
+# Disabled by default for XLA (to avoid -nodefaultlibs issues with ROCm)
+# Can be enabled via --@rules_ml_toolchain//common:enable_hermetic_libraries=True
+cc_feature(
+    name = "hermetic_libraries_conditional",
+    cc_flags = ["-nostdinc++"],
+    compiler_flags = ["-nostdinc"],
+    enabled = select({
+        "//common:is_hermetic_libraries_enabled": True,
+        "//conditions:default": False,
+    }),
+    linker_flags = [
+        "-nostdlib",
+        "-nodefaultlibs",
+    ],
 )
 
 # buildifier: leave-alone
@@ -152,6 +191,7 @@ filegroup(
         "@llvm_linux_x86_64//:clang",
         "@llvm_linux_x86_64//:clang++",
         "@llvm_linux_x86_64//:distro_libs",
+        "@llvm_linux_x86_64//:asan_ignorelist",
     ],
 )
 
@@ -163,6 +203,7 @@ filegroup(
         ":rocm_toolkit_files",
         ":startup_libs",
         ":wrappers",
+        "//cc/rocm/features:global_symbol_version_script",
         "@llvm_linux_x86_64//:distro_libs",
         "@llvm_linux_x86_64//:ld",
     ],
@@ -193,33 +234,29 @@ filegroup(
 # Features
 # =============================================================================
 
-FEATURES_ESSENTIAL = select({
-    # Local sysroot: DO NOT use hermetic_libraries (no -nostdinc/-nostdinc++)
-    # We want to use system headers and libraries
-    "//cc/sysroots:local_sysroot_enabled": [
-        "//cc/features:local_sysroot_default_libs",
-    ],
-    # Hermetic sysroot: use hermetic_libraries feature
-    "//conditions:default": ["//third_party/rules_cc_toolchain/features:hermetic_libraries"],
-}) + [
+FEATURES_ESSENTIAL = [
+    # Conditional hermetic libraries (disabled by default for XLA)
+    ":hermetic_libraries_conditional",
     # Library imports
     ":imports_feature",
     ":startup_libs_feature",
+    ":static_link_libstdcxx",
 
     # ROCm-specific features
     ":rocm_hipcc_feature",
     "//cc/rocm/features:rocm_defines",
     "//cc/rocm/features:rocm_hermetic",
     "//cc/rocm/features:rocm_warnings",
+    "//cc/rocm/features:rocm_compiler_rt",
+    "//cc/rocm/features:rocm_global_symbol_version_script",
+    "//cc/features:no_solib_rpaths",
+    "//cc/features:runtime_library_search_directories",
 
     # Toolchain configuration
     "//third_party/rules_cc_toolchain/features:warnings",
     "//third_party/rules_cc_toolchain/features:reproducible",
     "//third_party/rules_cc_toolchain/features:use_lld",
-] + select({
-    "//cc/sysroots:local_sysroot_enabled": ["//cc/features:local_sysroot_linux"],
-    "//conditions:default": ["//cc/features:sysroot_linux_x86_64"],
-}) + [
+    "//cc/features/linux/x86_64:sysroot",
     # PIC / PIE flags
     "//third_party/rules_cc_toolchain/features:supports_pic",
     "//third_party/rules_cc_toolchain/features:position_independent_code",
@@ -252,12 +289,7 @@ cc_toolchain_config(
     c_compiler = "@llvm_linux_x86_64//:clang",
     cc_compiler = "@llvm_linux_x86_64//:clang++",
     compiler_features = FEATURES_ESSENTIAL,
-    cxx_builtin_include_directories = select({
-        # Local sysroot: use dynamically detected system include paths
-        "//cc/sysroots:local_sysroot_enabled": local_sysroot_info.include_directories,
-        # Hermetic sysroot: no system directories
-        "//conditions:default": [],
-    }),
+    cxx_builtin_include_directories = [],
     linker = "@llvm_linux_x86_64//:ld",
     strip_tool = "@llvm_linux_x86_64//:strip",
     target_cpu = "x86_64",
@@ -278,4 +310,21 @@ cc_toolchain(
     supports_param_files = 1,
     toolchain_config = ":config",
     toolchain_identifier = "toolchain_linux_x86_64_linux_x86_64_rocm_id",
+)
+
+# Aliases to select between libc++ and libstdc++
+alias(
+    name = "std_incs",
+    actual = select({
+        "//common:is_stdlib_libcxx": "@llvm_linux_x86_64//:std_incs",
+        "//conditions:default": "@sysroot_linux_x86_64//:std_incs",
+    }),
+)
+
+alias(
+    name = "std_libs",
+    actual = select({
+        "//common:is_stdlib_libcxx": "@llvm_linux_x86_64//:std_libs",
+        "//conditions:default": "@sysroot_linux_x86_64//:std_libs",
+    }),
 )

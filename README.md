@@ -68,8 +68,8 @@ Supported versions of LLVM
 | Version | Linux x86_64 | Linux aarch64 | macOS aarch64 |
 |---------|--------------|---------------|---------------|
 | 18      | x | x             | x             |
-| 19      | x |               |               |
-| 20      | x | x             |               |
+| 19      | x | x             | x             |
+| 20      | x | x             | x             |
 | 21      | x | x             |               |
 | 22      | x | x             |               |
 
@@ -101,7 +101,7 @@ For detailed instructions on how to configure and use sanitizers [click this lin
 ### CPU hermetic tests
 Project supports CPU hermetic builds on:
 * Linux x86_64 / aarch64
-* macOS aarch64 - *In Development*
+* macOS aarch64 (using LLVM 19 or newer is highly recommended, as it introduces linker updates for Apple platforms)
 
 The command allows you to run hermetic build tests:
 
@@ -135,21 +135,61 @@ When the executor and the target are the same, a non-hermetic GPU build can stil
 
 For details, look at the `.bazelrc` file, specifically the `cuda_clang_local` configuration.
 
-<!--
 ### Cross-platform builds
 Project supports cross-platform builds only on Linux x86_64 executor 
 and allows build for such targets:
 * Linux aarch64
-* macOS aarch64
+<!--* macOS aarch64-->
 
 #### Build for Linux aarch64
 `bazel build //cc/tests/cpu/... --platforms=//common:linux_aarch64`
-
+<!--
 #### Build for macOS aarch64
 [Prepare SDK](cc/sysroots/darwin_aarch64/README.md) before run the following command.
 
 `bazel build //cc/tests/cpu/... --platforms=//common:macos_aarch64`
 -->
+
+## C++ toolchain features
+### Clang Header Modules
+To manage Clang header modules, use a producer/consumer architecture:
+* **Producers:** Explicitly enable the `header_modules` feature on specific targets that are compatible with and support being compiled as header modules.
+* **Consumers (Global Default):** Enable the `use_header_modules` feature globally across your workspace so that targets consume available modules by default.
+* **Consumers (Opt-Out):** For specific targets that fail to build with header modules, completely disable the feature locally by adding `features = ["-use_header_modules"]` to their rule.
+
+```
+# BUILD.bazel
+
+# ---------------------------------------------------------
+# 1. The producer
+# ---------------------------------------------------------
+cc_library(
+    name = "utils_lib",
+    srcs = ["utils.cc"],
+    hdrs = ["utils.h"], 
+    features = ["header_modules"],
+    visibility = ["//visibility:public"],
+)
+
+# ---------------------------------------------------------
+# 2. The consumer
+# ---------------------------------------------------------
+cc_library(
+    name = "standard_consumer",
+    srcs = ["consumer.cc"],
+    deps = [":utils_lib"],
+)
+
+# ---------------------------------------------------------
+# 3. The incompatible target
+# ---------------------------------------------------------
+cc_library(
+    name = "incompatible_lib",
+    srcs = ["incompatible.cc"],
+    deps = [":utils_lib"],
+    features = ["-use_header_modules"],
+)
+```
 
 ## Troubleshooting
 Encountering issues? Try to find decision on [How To Fix](HOW-TO-FIX.md) page.

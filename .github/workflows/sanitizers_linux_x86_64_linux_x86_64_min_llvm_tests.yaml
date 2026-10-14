@@ -41,7 +41,7 @@ jobs:
         job_info: [
           {
             runner: "linux-x86-n2-16",
-            container: "us-docker.pkg.dev/ml-oss-artifacts-published/ml-public-container/ml-build:latest",
+            container: "us-docker.pkg.dev/ml-oss-artifacts-published/ml-public-container/ml-build@sha256:4fb9960acd5951234ae4272e93bc262be4111ce32afb77e69b1038b61251dec0",
           },
         ]
     # Use self-hosted runners. For a Linux runner, a corresponding container image used for the
@@ -52,16 +52,16 @@ jobs:
       image: ${{ matrix.job_info.container }}
     steps:
       - name: "Checkout repository"
-        uses: actions/checkout@v5
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
 
       - name: "ASan Clang 18, Glibc 2.27 | Testing..."
-        run: bazel test --color=yes --config=asan //cc/sanitizers/tests:asan_test
+        run: bazel test --cxxopt="-std=c++17" --color=yes --config=asan //cc/sanitizers/tests:asan_test
 
       - name: "Bzlmod. ASan Clang 18, Glibc 2.27 | Testing..."
-        run: bazel test --color=yes --config=asan --config=bzlmod //cc/sanitizers/tests:asan_test
+        run: bazel test --cxxopt="-std=c++17" --color=yes --config=asan --config=bzlmod //cc/sanitizers/tests:asan_test
 
       - name: "TSan Clang 18, Glibc 2.27 | Testing..."
-        run: bazel test --color=yes --config=tsan --config=tsan_test //cc/sanitizers/tests:tsan_test
+        run: bazel test --cxxopt="-std=c++17" --color=yes --config=tsan --config=tsan_test //cc/sanitizers/tests:tsan_test
 
       - name: "Bzlmod. TSan Clang 18, Glibc 2.27 | Testing..."
-        run: bazel test --color=yes --config=tsan --config=tsan_test --config=bzlmod //cc/sanitizers/tests:tsan_test
+        run: bazel test --cxxopt="-std=c++17" --color=yes --config=tsan --config=tsan_test --config=bzlmod //cc/sanitizers/tests:tsan_test

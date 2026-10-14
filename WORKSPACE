@@ -33,8 +33,15 @@ bazel_features_deps()
 
 http_archive(
     name = "rules_java",
-    sha256 = "a9690bc00c538246880d5c83c233e4deb83fe885f54c21bb445eb8116a180b83",
-    urls = ["https://github.com/bazelbuild/rules_java/releases/download/7.12.2/rules_java-7.12.2.tar.gz"],
+    sha256 = "5c215757b9a6c3dd5312a3cdc4896cef3f0c5b31db31baa8da0d988685d42ae4",
+    urls = ["https://github.com/bazelbuild/rules_java/releases/download/8.5.0/rules_java-8.5.0.tar.gz"],
+)
+
+http_archive(
+    name = "rules_proto",
+    sha256 = "80d3a4ec17354cccc898bfe32118edd934f851b03029d63ef3fc7c8663a7415c",
+    strip_prefix = "rules_proto-5.3.0-21.5",
+    urls = ["https://github.com/bazelbuild/rules_proto/archive/refs/tags/5.3.0-21.5.tar.gz"],
 )
 
 ### bazel_skylib
@@ -45,6 +52,13 @@ http_archive(
         "https://mirror.bazel.build/github.com/bazelbuild/bazel-skylib/releases/download/1.8.0/bazel-skylib-1.8.0.tar.gz",
         "https://github.com/bazelbuild/bazel-skylib/releases/download/1.8.0/bazel-skylib-1.8.0.tar.gz",
     ],
+)
+
+http_archive(
+    name = "rules_shell",
+    sha256 = "61979b951a28110c48a45c2120d3108d943b7c8d68ac56e2de6b75ac547d0bc5",
+    strip_prefix = "rules_shell-c02969a1822191a179cd70c0cedd076385446a26",
+    urls = ["https://github.com/bazel-contrib/rules_shell/archive/c02969a1822191a179cd70c0cedd076385446a26.tar.gz"],
 )
 
 load("@bazel_skylib//:workspace.bzl", "bazel_skylib_workspace")
@@ -64,6 +78,10 @@ http_archive(
 load("//third_party/py:python_init_rules.bzl", "python_init_rules")
 
 python_init_rules()
+
+load("@rules_java//java:rules_java_deps.bzl", "rules_java_dependencies")
+
+rules_java_dependencies()
 
 load("//py:python_init_repositories.bzl", "python_init_repositories")
 
@@ -116,11 +134,11 @@ protobuf_deps()
 http_archive(
     name = "zlib",
     build_file = "@com_google_protobuf//:third_party/zlib.BUILD",
-    sha256 = "38ef96b8dfe510d42707d9c781877914792541133e1870841463bfa73f883e32",
-    strip_prefix = "zlib-1.3.1",
+    sha256 = "d7a0654783a4da529d1bb793b7ad9c3318020af77667bcae35f95d0e42a792f3",
+    strip_prefix = "zlib-1.3.2",
     urls = [
-        "https://github.com/madler/zlib/releases/download/v1.3.1/zlib-1.3.1.tar.xz",
-        "https://zlib.net/zlib-1.3.1.tar.xz",
+        "https://github.com/madler/zlib/releases/download/v1.3.2/zlib-1.3.2.tar.xz",
+        "https://zlib.net/zlib-1.3.2.tar.xz",
     ],
 )
 
@@ -287,9 +305,26 @@ sycl_configure(name = "local_config_sycl")
 ##############################################################
 # ROCm configuration
 
+# Download ROCm redistributable
+load(
+    "//gpu/rocm:rocm_hermetic_download.bzl",
+    "ROCM_SHA256",
+    "ROCM_URL",
+    "rocm_hermetic_download",
+)
+
+rocm_hermetic_download(
+    name = "rocm_redist_dist",
+    url = ROCM_URL,
+    sha256 = ROCM_SHA256,
+)
+
 load("//gpu/rocm:hipcc_configure.bzl", "hipcc_configure")
 
-hipcc_configure(name = "config_rocm_hipcc")
+hipcc_configure(
+    name = "config_rocm_hipcc",
+    rocm_dist = "@rocm_redist_dist//:rocm_root",
+)
 
 ##############################################################
 # Local sysroot configuration

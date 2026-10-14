@@ -13,9 +13,15 @@
 # limitations under the License.
 # ==============================================================================
 
-load("@pybind11_bazel//:build_defs.bzl", "pybind_extension")
-load("@rules_cc//cc:defs.bzl", "cc_binary", "cc_library", "cc_test")
 load("@com_google_protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
+load("@pybind11_bazel//:build_defs.bzl", "pybind_extension")
+load(
+    "@rules_cc//cc:defs.bzl",
+    "cc_binary",
+    "cc_import",
+    "cc_library",
+    "cc_test",
+)
 load("@rules_proto//proto:defs.bzl", "proto_library")
 load("@rules_python//python:defs.bzl", "py_binary", "py_library", "py_test")
 
@@ -35,7 +41,68 @@ cc_binary(
 
 cc_test(
     name = "hello_world_test",
-    srcs = ["hello_world.cc"],
+    srcs = ["hello_world_test.cc"],
+    deps = [
+        "@gtest//:gtest_main",
+    ],
+)
+
+#############################################
+# C++ modules
+
+# Binary with library example
+cc_library(
+    name = "hello_module",
+    features = [
+        "c++20",
+        "cpp_modules",
+    ],
+    module_interfaces = ["hello_module.cppm"],
+    tags = ["cpp_modules"],
+)
+
+cc_binary(
+    name = "hello_module_main",
+    srcs = ["hello_module_main.cc"],
+    features = [
+        "c++20",
+        "cpp_modules",
+    ],
+    tags = ["cpp_modules"],
+    deps = [":hello_module"],
+)
+
+# Tests
+cc_library(
+    name = "utils_module",
+    # The c++20 feature can be added as --features=c++20 when the tests run
+    features = [
+        "c++20",
+        "cpp_modules",
+    ],
+    module_interfaces = ["utils_module.cppm"],
+    tags = ["cpp_modules"],
+    deps = [
+        "@com_google_absl//absl/algorithm:container",
+        "@com_google_absl//absl/container:flat_hash_map",
+        "@com_google_absl//absl/container:flat_hash_set",
+        "@com_google_absl//absl/strings",
+    ],
+)
+
+cc_test(
+    name = "utils_module_test",
+    srcs = ["utils_module_test.cc"],
+    # The c++20 feature can be added as --features=c++20 when the tests run
+    features = [
+        "c++20",
+        "cpp_modules",
+    ],
+    tags = ["cpp_modules"],
+    deps = [
+        ":utils_module",
+        "@gtest//:gtest_main",
+    ],
 )
 
 #############################################
@@ -108,8 +175,8 @@ cc_binary(
     name = "protobuf",
     srcs = ["protobuf.cc"],
     deps = [
+        ":protobuf_hello_lib",
         "@com_google_protobuf//:protobuf",
-        ":protobuf_hello_lib"
     ],
 )
 
@@ -157,7 +224,7 @@ cc_binary(
     linkshared = True,
     deps = [
         "@com_google_protobuf//:protobuf",
-        "@pybind11//:pybind11"
+        "@pybind11",
     ],
 )
 
@@ -171,8 +238,8 @@ genrule(
 py_binary(
     name = "protogen_tool",
     srcs = ["protogen_tool.py"],
-    main = "protogen_tool.py",
     data = [":protogen.so"],
+    main = "protogen_tool.py",
 )
 
 genrule(
@@ -203,7 +270,7 @@ cc_binary(
     deps = [
         ":my_proto_library_cc",
         "@com_google_protobuf//:protobuf",
-        "@pybind11//:pybind11",
+        "@pybind11",
     ],
 )
 
